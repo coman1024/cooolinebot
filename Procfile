@@ -1,1 +1,1 @@
-web: gunicorn app_with_handler
+web: gunicorn app_with_handler:app
