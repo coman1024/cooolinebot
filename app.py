@@ -16,8 +16,8 @@ from __future__ import unicode_literals
 
 import os
 import sys
-from argparse import ArgumentParser
 
+from argparse import ArgumentParser
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookParser
@@ -28,6 +28,8 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+
+
 
 app = Flask(__name__)
 
@@ -52,6 +54,7 @@ def callback():
     # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
+    print("Request body: " + body)
 
     # parse webhook body
     try:
