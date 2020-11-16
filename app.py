@@ -60,6 +60,7 @@ def callback():
     # parse webhook body
     try:
         events = parser.parse(body, signature)
+        print("Request body4: " + body)
     except InvalidSignatureError:
         abort(400)
 
