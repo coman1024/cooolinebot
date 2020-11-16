@@ -73,6 +73,11 @@ def callback():
 
     return 'OK'
 
+@app.route("/abc", methods=['GET'])
+def index():
+    print("hi")
+    return 'OK'
+
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
