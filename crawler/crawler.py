@@ -27,6 +27,12 @@ class Crawler():
     goldNumber = self.getNumber(targetIdx)
     return goldNumber
 
+  def findNewNumber(self):
+    return self.getNumber(0)
+
+  def findNewDate(self):
+    date = lottoHistoryTable.find("span", id = re.compile("Lotto649Control_history_dlQuery_L649_DDate_0"))
+    return date.text
 
   def getNumber(self, targetIdx): 
     num1 = lottoHistoryTable.find("span", id = ("Lotto649Control_history_dlQuery_No1_" + str(targetIdx)))
