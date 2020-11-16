@@ -53,8 +53,9 @@ def callback():
 
     # get request body as text
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
-    print("Request body: " + body)
+    app.logger.info("Request body1: " + body)
+    print("Request body2: " + body)
+    sys.stdout.flush("Request body3: " + body)
 
     # parse webhook body
     try:
