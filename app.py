@@ -26,9 +26,15 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent,
+    TextMessage,
+    TextSendMessage,
+    TemplateSendMessage,
+    ButtonsTemplate,
+    MessageTemplateAction
 )
 
+import crawler.crawler
 
 
 app = Flask(__name__)
@@ -54,13 +60,10 @@ def callback():
     # get request body as text
     body = request.get_data(as_text=True)
     app.logger.debug("Request body1: " + body)
-    print("Request body2: " + body)
-    sys.stdout.flush("Request body3: " + body)
 
     # parse webhook body
     try:
         events = parser.parse(body, signature)
-        print("Request body4: " + body)
     except InvalidSignatureError:
         abort(400)
 
@@ -71,17 +74,50 @@ def callback():
         if not isinstance(event.message, TextMessage):
             continue
 
+        print(event.message)
+        Crawler = crawler.crawler.Crawler()
+    
+        defaultText = "查無指令"
+        returnText = defaultText
+        command1 = "查詢最新"
+        command2 = "這是殺小"
+
+        if event.message.text == "安安":
+            line_bot_api.reply_message(  # 回復傳入的訊息文字
+                event.reply_token,
+                TemplateSendMessage(
+                    alt_text='樂透功能選單',
+                    template=ButtonsTemplate(
+                        title='你想要做什麼勒',
+                        text='請選擇功能',
+                        actions=[
+                            MessageTemplateAction(
+                                label='查詢最新一期',
+                                text=command1
+                            ),
+                            MessageTemplateAction(
+                                label='Coming Soon',
+                                text=command2
+                            )
+                        ]
+                    )
+                )
+            )
+
+        else :
+            returnText = defaultText
+
+        if event.message.text == command1:
+            returnText = "最新一期得獎號碼：\n" + Crawler.findNewDate() + '\n' + Crawler.findByDate(Crawler.findNewDate())
+        if event.message.text == command2: 
+            returnText = "還沒做好啦，點殺小"
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=event.message.text)
+            TextSendMessage(text=returnText)
         )
 
     return 'OK'
 
-@app.route("/abc", methods=['GET'])
-def index():
-    print("hi")
-    return 'OK'
 
 
 if __name__ == "__main__":
