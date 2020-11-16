@@ -1,1 +1,1 @@
-web: gunicorn app_with_handler:app
+web: gunicorn app_with_handler:app --log-level=debug
