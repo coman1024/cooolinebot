@@ -27,14 +27,21 @@ from linebot.exceptions import (
 )
 from linebot.models import (
     MessageEvent,
+    PostbackEvent,
     TextMessage,
     TextSendMessage,
     TemplateSendMessage,
     ButtonsTemplate,
-    MessageTemplateAction
+    MessageTemplateAction,
+    PostbackTemplateAction
 )
 
-import crawler.crawler
+from crawler import LotteryNumber
+
+from menu import (
+  queryMenu , 
+  featureMenu
+)
 
 
 app = Flask(__name__)
@@ -52,6 +59,8 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
+defaultText = "查無指令"
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -66,59 +75,31 @@ def callback():
         events = parser.parse(body, signature)
     except InvalidSignatureError:
         abort(400)
-
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
-        if not isinstance(event, MessageEvent):
-            continue
-        if not isinstance(event.message, TextMessage):
-            continue
-
-        print(event.message)
-        Crawler = crawler.crawler.Crawler()
-    
-        defaultText = "查無指令"
-        returnText = defaultText
-        command1 = "查詢最新"
-        command2 = "這是殺小"
-
-        if event.message.text == "安安":
-            line_bot_api.reply_message(  # 回復傳入的訊息文字
-                event.reply_token,
-                TemplateSendMessage(
-                    alt_text='樂透功能選單',
-                    template=ButtonsTemplate(
-                        title='你想要做什麼勒',
-                        text='請選擇功能',
-                        actions=[
-                            MessageTemplateAction(
-                                label='查詢最新一期',
-                                text=command1
-                            ),
-                            MessageTemplateAction(
-                                label='Coming Soon',
-                                text=command2
-                            )
-                        ]
+        
+        
+        if isinstance(event, MessageEvent):
+            messageText = event.message.text
+            if messageText.startswith("#"):
+                messageText = messageText[1:]
+                if  (messageText == "樂透"):      
+                    line_bot_api.reply_message(  
+                        event.reply_token, queryMenu.menu   
                     )
+                
+        elif isinstance(event, PostbackEvent):  # 如果有回傳值事件 
+            data = event.postback.data.split('&')
+            lotteryBot = LotteryNumber.LotteryNumber()
+            if data[0] == "query":
+                eventCommand = data[1]
+            queryMenuCommnd = queryMenu.menuCommend()
+            if  (eventCommand == "1"):      
+                returnText = "最新一期得獎號碼：\n" + lotteryBot.findNewDate() + '\n' + lotteryBot.findByDate(lotteryBot.findNewDate())
+                line_bot_api.reply_message(  
+                    event.reply_token, TextSendMessage(text=returnText)   
                 )
-            )
-
-        else :
-            returnText = defaultText
-
-        if event.message.text == command1:
-            returnText = "最新一期得獎號碼：\n" + Crawler.findNewDate() + '\n' + Crawler.findByDate(Crawler.findNewDate())
-        if event.message.text == command2: 
-            returnText = "還沒做好啦，點殺小"
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=returnText)
-        )
-
     return 'OK'
-
-
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
