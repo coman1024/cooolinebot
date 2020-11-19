@@ -1,35 +1,33 @@
+
 from linebot.models import (
     TemplateSendMessage,
     ButtonsTemplate,
     PostbackTemplateAction
 )
 
-from crawler import LotteryNumber
-
 class menuCommend():  
     class command1():
-        lotteryBot = LotteryNumber.LotteryNumber()
-        label = "查詢最新中獎號碼"
-        text = "查詢最新中獎號碼"
-        data = "query&1"
-        messageText = "最新一期得獎號碼：\n" + lotteryBot.findNewDate() + '\n' + lotteryBot.findByDate(lotteryBot.findNewDate())
+        label = "自選號碼對獎"
+        text = "自選對獎"
+        data = "rew&1"
+        messageText = "回覆最新一期API"
     
     class command2():
-        label = "日期查詢"
-        text =  "日期查詢"
-        data = "query&2"
-        messageText = "請輸入 #queryD 日期(YYY/MM/DD)"
+        label = "電選號碼對獎"
+        text =  "電選對獎"
+        data = "rew&2"
+        messageText = "回覆最新一期API"
     
     class command3():
-        label = "期數查詢"
-        text = "期數查詢"
-        data = "query&3"
-        messageText = "請輸入 #queryT 期數"
+        label = "輸入號碼對獎"
+        text = "輸入號碼對獎"
+        data = "rew&3"
+        messageText = "請輸入 #rew 號碼,隔開(01,02,03,04,05,06)"
 
 menu = TemplateSendMessage(
-    alt_text = '查詢號碼功能選單',
+    alt_text = '對獎功能選單',
     template = ButtonsTemplate(
-        title = '你想要查詢什麼勒',
+        title = '你想要中什麼獎勒',
         text = '請選擇功能',
         actions = [
             PostbackTemplateAction(

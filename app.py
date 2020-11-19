@@ -36,11 +36,11 @@ from linebot.models import (
     PostbackTemplateAction
 )
 
-from crawler import LotteryNumber
-
 from menu import (
-  queryMenu , 
-  featureMenu
+    featureMenu,
+    queryMenu, 
+    rewMenu,
+    saveMenu
 )
 
 
@@ -77,28 +77,71 @@ def callback():
         abort(400)
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
-        
-        
         if isinstance(event, MessageEvent):
             messageText = event.message.text
             if messageText.startswith("#"):
                 messageText = messageText[1:]
                 if  (messageText == "樂透"):      
                     line_bot_api.reply_message(  
-                        event.reply_token, queryMenu.menu   
+                        event.reply_token, featureMenu.menu   
                     )
+                else:
+                    line_bot_api.reply_message(  
+                    event.reply_token, TextSendMessage(text=defaultText)   
+                )
                 
         elif isinstance(event, PostbackEvent):  # 如果有回傳值事件 
+            returnText = defaultText
             data = event.postback.data.split('&')
-            lotteryBot = LotteryNumber.LotteryNumber()
+            
             if data[0] == "query":
                 eventCommand = data[1]
-            queryMenuCommnd = queryMenu.menuCommend()
-            if  (eventCommand == "1"):      
-                returnText = "最新一期得獎號碼：\n" + lotteryBot.findNewDate() + '\n' + lotteryBot.findByDate(lotteryBot.findNewDate())
-                line_bot_api.reply_message(  
-                    event.reply_token, TextSendMessage(text=returnText)   
-                )
+                menuCommend = queryMenu.menuCommend()
+                if (eventCommand == "0"): 
+                    line_bot_api.reply_message(  
+                        event.reply_token, queryMenu.menu   
+                    )
+                elif (eventCommand == "1"):      
+                    returnText = menuCommend.command1().messageText
+                elif (eventCommand == "2"):
+                    returnText = menuCommend.command2().messageText
+                elif (eventCommand == "3"):
+                    returnText = menuCommend.command3().messageText
+
+            elif data[0] == "rew":
+                eventCommand = data[1]
+                menuCommend = rewMenu.menuCommend()
+                if (eventCommand == "0"): 
+                    line_bot_api.reply_message(  
+                        event.reply_token, rewMenu.menu   
+                    )
+                elif (eventCommand == "1"):      
+                    returnText = menuCommend.command1().messageText
+                elif (eventCommand == "2"):
+                    returnText = menuCommend.command2().messageText
+                elif (eventCommand == "3"):
+                    returnText = menuCommend.command3().messageText
+
+            elif data[0] == "save":
+                eventCommand = data[1]
+                menuCommend = saveMenu.menuCommend()
+                if (eventCommand == "0"): 
+                    line_bot_api.reply_message(  
+                        event.reply_token, saveMenu.menu   
+                    )
+                elif (eventCommand == "1"):      
+                    returnText = menuCommend.command1().messageText
+                elif (eventCommand == "2"):
+                    returnText = menuCommend.command2().messageText
+                elif (eventCommand == "3"):
+                    returnText = menuCommend.command3().messageText 
+                elif (eventCommand == "4"):
+                    returnText = menuCommend.command4().messageText 
+
+            line_bot_api.reply_message(  
+                event.reply_token, TextSendMessage(text=returnText)   
+            )        
+            
     return 'OK'
 
 if __name__ == "__main__":
