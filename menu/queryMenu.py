@@ -4,7 +4,7 @@ from linebot.models import (
     PostbackTemplateAction
 )
 
-from crawler import LotteryNumber
+from feature import LotteryNumber
 
 class menuCommend():  
     class command1():
