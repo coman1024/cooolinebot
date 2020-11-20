@@ -1,33 +1,39 @@
 from linebot.models import (
     TemplateSendMessage,
     ButtonsTemplate,
-    PostbackTemplateAction
+    MessageTemplateAction
 )
 
-class menuCommend():  
-    class command1():
-        label = "儲存自選號碼"
-        text = "儲存自選號碼"
-        data = "save&1"
-        messageText = "請輸入 #save1 號碼(ex:01,02,03)"
-    
-    class command2():
-        label = "自選號碼查詢"
-        text =  "自選號碼查詢"
-        data = "save&2"
-        messageText = "顯示自選號碼"
-    
-    class command3():
-        label = "儲存電選號碼"
-        text = "儲存電選號碼"
-        data = "save&3"
-        messageText = "請輸入 #save2 號碼 日期(ex:01,02,03... 109/11/11)"
+ 
+class save1():
+    label = "儲存自選號碼"
+    text = "save1"
+    def save(targetNum):
+        if (len(targetNum) == 0):
+            return "請輸入 save1 號碼(ex:01,02,03)"
+        else: 
+            return "還沒寫啦"
 
-    class command4():
-        label = "驚喜按鈕"
-        text = "世界上誰最智障"
-        data = "save&4"
-        messageText = "就是你"
+class save2():
+    label = "自選號碼查詢"
+    text =  "save2"
+    def save():
+        return "還沒寫啦"
+
+class save3():
+    label = "儲存電選號碼"
+    text = "save3"
+    def save(targetNum):
+        if (len(targetNum) == 0):
+            return "請輸入 save3 號碼 日期(ex:01,02,03... 109/11/11)"
+        else: 
+            return "還沒寫啦"
+
+class save4():
+    label = "陰陽人爛屁股"
+    text = "你罵我陰陽人爛屁股"
+    def save():
+        return "誰答腔我就罵誰"
 
 menu = TemplateSendMessage(
     alt_text = '查詢號碼功能選單',
@@ -35,25 +41,21 @@ menu = TemplateSendMessage(
         title = '你想要查詢什麼勒',
         text = '請選擇功能',
         actions = [
-            PostbackTemplateAction(
-                label = menuCommend.command1().label,
-                text = menuCommend.command1().text,
-                data = menuCommend.command1().data
+            MessageTemplateAction(
+                label = save1.label,
+                text = save1.text
             ),
-            PostbackTemplateAction(
-                label = menuCommend.command2().label,
-                text = menuCommend.command2().text,
-                data = menuCommend.command2().data
+            MessageTemplateAction(
+                label = save2.label,
+                text = save2.text
             ),
-            PostbackTemplateAction(
-                label = menuCommend.command3().label,
-                text = menuCommend.command3().text,
-                data = menuCommend.command3().data
+            MessageTemplateAction(
+                label = save3.label,
+                text = save3.text
             ),
-            PostbackTemplateAction(
-                label = menuCommend.command4().label,
-                text = menuCommend.command4().text,
-                data = menuCommend.command4().data
+            MessageTemplateAction(
+                label = save4.label,
+                text = save4.text
             )
         ]
     )

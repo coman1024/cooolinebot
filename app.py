@@ -32,17 +32,37 @@ from linebot.models import (
     TextSendMessage,
     TemplateSendMessage,
     ButtonsTemplate,
-    MessageTemplateAction,
-    PostbackTemplateAction
+    MessageTemplateAction
 )
 
 from menu import (
     featureMenu,
-    queryMenu, 
+    queryMenu,
     rewMenu,
     saveMenu
 )
+from menu.featureMenu import(
+    menu1,
+    menu2,
+    menu3
+)
+from menu.queryMenu import(
+    query1,
+    query2,
+    query3
+)
+from menu.rewMenu import(
+    reward1,
+    reward2,
+    reward3
+)
 
+from menu.saveMenu import(
+    save1,
+    save2,
+    save3,
+    save4
+)
 
 app = Flask(__name__)
 print("sio start app !!")
@@ -79,74 +99,53 @@ def callback():
     for event in events:
         if isinstance(event, MessageEvent):
             messageText = event.message.text
-            if messageText.startswith("#"):
-                messageText = messageText[1:]
-                if (messageText == "樂透"):      
-                    line_bot_api.reply_message(event.reply_token, featureMenu.menu)
-                else:
-                    returnText = defaultText
-                    if (messageText.startswith("query")):
-                        menuCommend = queryMenu.menuCommend()               
-                        if (messageText.startswith("queryD")):
-                            targetDate = messageText[6:].strip()
-                            returnText = menuCommend.command2.find(targetDate)
-                        elif (messageText.startswith("queryT")):   
-                            targetTerm = messageText[6:].strip()
-                            returnText = menuCommend.command3.find(targetTerm)
-                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText)) 
-                         
-        elif isinstance(event, PostbackEvent):  # 如果有回傳值事件 
-            returnText = defaultText
-            data = event.postback.data.split('&')
+            returnText = ""
+            if (messageText == "menu"):      
+                line_bot_api.reply_message(event.reply_token, featureMenu.menu)
             
-            if data[0] == "query":
-                eventCommand = data[1]
-                menuCommend = queryMenu.menuCommend()
-                if (eventCommand == "0"): 
-                    line_bot_api.reply_message(  
-                        event.reply_token, queryMenu.menu   
-                    )
-                elif (eventCommand == "1"):      
-                    returnText = menuCommend.command1().messageText
-                elif (eventCommand == "2"):
-                    returnText = menuCommend.command2().messageText
-                elif (eventCommand == "3"):
-                    returnText = menuCommend.command3().messageText
+            elif (messageText.startswith("query")):
+                messageText = messageText[len("query"):]
+                
+                if (messageText.startswith("M")):
+                    line_bot_api.reply_message(event.reply_token, queryMenu.menu)
+                elif (messageText.startswith("1")):
+                    returnText = query1.find()
+                elif (messageText.startswith("2")):
+                    returnText = query2.find(messageText[1:].strip())
+                elif (messageText.startswith("3")):   
+                    returnText = query3.find(messageText[1:].strip())
+                
+            elif (messageText.startswith("reward")):
+                messageText = messageText[len("reward"):]
 
-            elif data[0] == "rew":
-                eventCommand = data[1]
-                menuCommend = rewMenu.menuCommend()
-                if (eventCommand == "0"): 
-                    line_bot_api.reply_message(  
-                        event.reply_token, rewMenu.menu   
-                    )
-                elif (eventCommand == "1"):      
-                    returnText = menuCommend.command1().messageText
-                elif (eventCommand == "2"):
-                    returnText = menuCommend.command2().messageText
-                elif (eventCommand == "3"):
-                    returnText = menuCommend.command3().messageText
+                if (messageText.startswith("M")):
+                    line_bot_api.reply_message(event.reply_token, rewMenu.menu)
+                elif (messageText.startswith("1")):
+                    returnText = reward1.reward()
+                elif (messageText.startswith("2")):   
+                    returnText = reward2.reward()
+                elif (messageText.startswith("3")):    
+                    returnText = reward3.reward(messageText[1:].strip())
 
-            elif data[0] == "save":
-                eventCommand = data[1]
-                menuCommend = saveMenu.menuCommend()
-                if (eventCommand == "0"): 
-                    line_bot_api.reply_message(  
-                        event.reply_token, saveMenu.menu   
-                    )
-                elif (eventCommand == "1"):      
-                    returnText = menuCommend.command1().messageText
-                elif (eventCommand == "2"):
-                    returnText = menuCommend.command2().messageText
-                elif (eventCommand == "3"):
-                    returnText = menuCommend.command3().messageText 
-                elif (eventCommand == "4"):
-                    returnText = menuCommend.command4().messageText 
+            elif (messageText.startswith("save")):
+                messageText = messageText[len("save"):]
 
-            line_bot_api.reply_message(  
-                event.reply_token, TextSendMessage(text=returnText)   
-            )        
-            
+                if (messageText.startswith("M")):
+                    line_bot_api.reply_message(event.reply_token, saveMenu.menu)
+                elif (messageText.startswith("1")):
+                    returnText = save1.save(messageText[1:].strip())
+                elif (messageText.startswith("2")):   
+                    returnText = save2.save()
+                elif (messageText.startswith("3")):           
+                    returnText = save3.save(messageText[1:].strip())
+                
+            elif (messageText == "你罵我陰陽人爛屁股"):           
+                returnText = save4.save()
+
+            if (returnText != ""):            
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))                   
+       
+
     return 'OK'
 
 if __name__ == "__main__":

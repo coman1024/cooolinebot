@@ -1,37 +1,42 @@
 from linebot.models import (
     TemplateSendMessage,
     ButtonsTemplate,
-    PostbackTemplateAction
+    MessageTemplateAction
 )
 
-from feature import LotteryNumber
-
-class menuCommend():  
-    class command1():
-        lotteryBot = LotteryNumber.LotteryNumber()
-        label = "查詢最新中獎號碼"
-        text = "查詢最新中獎號碼"
-        data = "query&1"
-        messageText = "最新一期得獎號碼：\n" + lotteryBot.findNewDate() + '\n' + lotteryBot.findByDate(lotteryBot.findNewDate())
-    
-    class command2():
-        label = "日期查詢"
-        text =  "日期查詢"
-        data = "query&2"
-        messageText = "請輸入 #queryD 日期(YYY/MM/DD)"
-        def find(date):
-            lotteryBot = LotteryNumber.LotteryNumber()
-            return lotteryBot.findByDate(date)
-    
-    class command3():
-        label = "期數查詢"
-        text = "期數查詢"
-        data = "query&3"
-        messageText = "請輸入 #queryT 期數"
-        def find(term):
-            lotteryBot = LotteryNumber.LotteryNumber()
-            return lotteryBot.findByTerm(term)
+from feature.LotteryNumber import lotteryBot
+lottery_bot = lotteryBot()
+class query1:
+    label = "查詢最新中獎號碼"
+    text = "query1"
+    def find():
+        date =  lottery_bot.findNewDate()
+        lottery_bot.findByDate(date)
+        return "最新一期得獎號碼：\n" + date + '\n' + lottery_bot.numberToStr()
         
+class query2:
+    label = "日期查詢"
+    text = "query2"
+    def find(date):
+        if (len(date)== 0):
+            return "請輸入 query2 日期(YYY/MM/DD)"
+        try:
+            lottery_bot.findByDate(date)
+            return lottery_bot.numberToStr()
+        except Exception as e:
+            return str(e)
+
+class query3:
+    label = "期數查詢"
+    text = "query3"
+    def find(term):
+        if(len(term) == 0):
+            return "請輸入 query3 期數"
+        try:
+            lottery_bot.findByTerm(term)     
+            return lottery_bot.numberToStr()
+        except Exception as e:
+            return str(e)
 
 menu = TemplateSendMessage(
     alt_text = '查詢號碼功能選單',
@@ -39,20 +44,17 @@ menu = TemplateSendMessage(
         title = '你想要查詢什麼勒',
         text = '請選擇功能',
         actions = [
-            PostbackTemplateAction(
-                label = menuCommend.command1().label,
-                text = menuCommend.command1().text,
-                data = menuCommend.command1().data
+            MessageTemplateAction(
+                label = query1.label,
+                text = query1.text
             ),
-            PostbackTemplateAction(
-                label = menuCommend.command2().label,
-                text = menuCommend.command2().text,
-                data = menuCommend.command2().data
+            MessageTemplateAction(
+                label = query2.label,
+                text = query2.text
             ),
-            PostbackTemplateAction(
-                label = menuCommend.command3().label,
-                text = menuCommend.command3().text,
-                data = menuCommend.command3().data
+            MessageTemplateAction(
+                label = query3.label,
+                text = query3.text
             )
         ]
     )

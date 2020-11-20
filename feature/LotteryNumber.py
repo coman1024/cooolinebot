@@ -6,8 +6,11 @@ response = requests.get("https://www.taiwanlottery.com.tw/lotto/lotto649/history
 
 soup = BeautifulSoup(response.text, "html.parser")
 lottoHistoryTable = soup.find("table", id="Lotto649Control_history_dlQuery")
-class LotteryNumber():
-  def __init__(self):
+
+
+class lotteryBot:
+  goldNumber = []
+  def __init__(slef):
     print("LotteryNumber!")
   
   #查詢最新
@@ -28,9 +31,8 @@ class LotteryNumber():
     
     #TODO if targetIdx = 99 thorws error
     if (targetIdx == 99):
-      return "找不到開獎日期"
-    goldNumber = self.getNumber(targetIdx)
-    return "日期:"+ targetDate + "\n號碼:" + goldNumber
+      raise RuntimeError("找不到開獎日期")
+    self.getNumber(targetIdx)
 
   #查詢by期數
   def findByTerm(self, targetTern):
@@ -46,9 +48,9 @@ class LotteryNumber():
     
     #TODO if targetIdx = 99 thorws error
     if (targetIdx == 99):
-      return "找不到開獎期數"
-    goldNumber = self.getNumber(targetIdx)
-    return "期數:"+ targetTern + "\n號碼:" + goldNumber
+      raise RuntimeError("找不到開獎期數")
+    self.getNumber(targetIdx)
+  
 
   def findNewDate(self):
     date = lottoHistoryTable.find("span", id = re.compile("Lotto649Control_history_dlQuery_L649_DDate_0"))
@@ -65,7 +67,13 @@ class LotteryNumber():
     num4 = lottoHistoryTable.find("span", id = ("Lotto649Control_history_dlQuery_No4_" + str(targetIdx)))
     num5 = lottoHistoryTable.find("span", id = ("Lotto649Control_history_dlQuery_No5_" + str(targetIdx)))
     num6 = lottoHistoryTable.find("span", id = ("Lotto649Control_history_dlQuery_No6_" + str(targetIdx)))
+    numS = lottoHistoryTable.find("span", id = ("Lotto649Control_history_dlQuery_SNo_" + str(targetIdx)))
+    
 
-    goldNumber = num1.text + "," + num2.text + ","  + num3.text + ","  + num4.text + ","  + num5.text + ","  + num6.text
-    return goldNumber
+    goldNumber = [num1.text, num2.text, num3.text, num4.text, num5.text, num6.text, numS.text]
+    self.goldNumber = goldNumber
+
+  def numberToStr(self):
+    return self.goldNumber[0] + ", " + self.goldNumber[1] + ", "  + self.goldNumber[2] + ", "  + self.goldNumber[3] + ", "  + self.goldNumber[4] + ", "  + self.goldNumber[5] + ", 特別號：" + self.goldNumber[6]
+
   

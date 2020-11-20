@@ -2,27 +2,36 @@
 from linebot.models import (
     TemplateSendMessage,
     ButtonsTemplate,
-    PostbackTemplateAction
+    MessageTemplateAction
 )
 
-class menuCommend():  
-    class command1():
-        label = "自選號碼對獎"
-        text = "自選對獎"
-        data = "rew&1"
-        messageText = "回覆最新一期API"
-    
-    class command2():
-        label = "電選號碼對獎"
-        text =  "電選對獎"
-        data = "rew&2"
-        messageText = "回覆最新一期API"
-    
-    class command3():
-        label = "輸入號碼對獎"
-        text = "輸入號碼對獎"
-        data = "rew&3"
-        messageText = "請輸入 #rew 號碼,隔開(01,02,03,04,05,06)"
+from feature import (
+    LotteryNumber, 
+    RewardNumber
+)
+
+class reward1:
+    label = "自選號碼對獎"
+    text = "reward1"
+    def reward():
+        # LotteryNumber = LotteryNumber.LotteryNumber()
+        return "還沒寫啦"
+
+class reward2:
+    label = "電選號碼對獎"
+    text =  "reward2"
+    def reward():
+        return "還沒寫啦"
+class reward3:
+    label = "輸入號碼對獎"
+    text = "reward3"
+    def reward(targetNum):
+        if(len(targetNum) == 0):
+            return "請輸入 reward3 號碼,隔開(01,02,03,04,05,06)"
+        try:
+            return "還沒寫啦"
+        except Exception as e:
+            return str(e)     
 
 menu = TemplateSendMessage(
     alt_text = '對獎功能選單',
@@ -30,20 +39,17 @@ menu = TemplateSendMessage(
         title = '你想要中什麼獎勒',
         text = '請選擇功能',
         actions = [
-            PostbackTemplateAction(
-                label = menuCommend.command1().label,
-                text = menuCommend.command1().text,
-                data = menuCommend.command1().data
+            MessageTemplateAction(
+                label = reward1.label,
+                text = reward1.text
             ),
-            PostbackTemplateAction(
-                label = menuCommend.command2().label,
-                text = menuCommend.command2().text,
-                data = menuCommend.command2().data
+            MessageTemplateAction(
+                label = reward2.label,
+                text = reward2.text
             ),
-            PostbackTemplateAction(
-                label = menuCommend.command3().label,
-                text = menuCommend.command3().text,
-                data = menuCommend.command3().data
+            MessageTemplateAction(
+                label = reward3.label,
+                text = reward3.text
             )
         ]
     )
