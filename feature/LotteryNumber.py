@@ -30,7 +30,7 @@ class LotteryNumber():
     if (targetIdx == 99):
       return "找不到開獎日期"
     goldNumber = self.getNumber(targetIdx)
-    return goldNumber
+    return "日期:"+ targetDate + "\n號碼:" + goldNumber
 
   #查詢by期數
   def findByTerm(self, targetTern):
@@ -48,7 +48,7 @@ class LotteryNumber():
     if (targetIdx == 99):
       return "找不到開獎期數"
     goldNumber = self.getNumber(targetIdx)
-    return goldNumber
+    return "期數:"+ targetTern + "\n號碼:" + goldNumber
 
   def findNewDate(self):
     date = lottoHistoryTable.find("span", id = re.compile("Lotto649Control_history_dlQuery_L649_DDate_0"))

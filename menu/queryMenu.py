@@ -19,12 +19,19 @@ class menuCommend():
         text =  "日期查詢"
         data = "query&2"
         messageText = "請輸入 #queryD 日期(YYY/MM/DD)"
+        def find(date):
+            lotteryBot = LotteryNumber.LotteryNumber()
+            return lotteryBot.findByDate(date)
     
     class command3():
         label = "期數查詢"
         text = "期數查詢"
         data = "query&3"
         messageText = "請輸入 #queryT 期數"
+        def find(term):
+            lotteryBot = LotteryNumber.LotteryNumber()
+            return lotteryBot.findByTerm(term)
+        
 
 menu = TemplateSendMessage(
     alt_text = '查詢號碼功能選單',

@@ -81,15 +81,20 @@ def callback():
             messageText = event.message.text
             if messageText.startswith("#"):
                 messageText = messageText[1:]
-                if  (messageText == "樂透"):      
-                    line_bot_api.reply_message(  
-                        event.reply_token, featureMenu.menu   
-                    )
+                if (messageText == "樂透"):      
+                    line_bot_api.reply_message(event.reply_token, featureMenu.menu)
                 else:
-                    line_bot_api.reply_message(  
-                    event.reply_token, TextSendMessage(text=defaultText)   
-                )
-                
+                    returnText = defaultText
+                    if (messageText.startswith("query")):
+                        menuCommend = queryMenu.menuCommend()               
+                        if (messageText.startswith("queryD")):
+                            targetDate = messageText[6:].strip()
+                            returnText = menuCommend.command2.find(targetDate)
+                        elif (messageText.startswith("queryT")):   
+                            targetTerm = messageText[6:].strip()
+                            returnText = menuCommend.command3.find(targetTerm)
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText)) 
+                         
         elif isinstance(event, PostbackEvent):  # 如果有回傳值事件 
             returnText = defaultText
             data = event.postback.data.split('&')
