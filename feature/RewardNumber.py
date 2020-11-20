@@ -1,8 +1,8 @@
 
 class rewardBot:
   glodNumber = []
-  glodNumberS = 0
-  slefNumber = [6, 12, 24, 25, 33, 35]
+  glodNumberS = "0"
+  slefNumber = ["6", "12", "24", "25", "33", "35"]
   def __init__(self):
     print("rewardBot!")
 
@@ -14,9 +14,7 @@ class rewardBot:
     glodNumberCount = len(set(self.glodNumber) & set(targetNumber))
     isGlodNumberS  = self.glodNumberS in targetNumber
 
-    print(glodNumberCount)
-    print(isGlodNumberS)
-    result = "沒中啦"
+    result = "槓龜拉"
     if glodNumberCount == 6:
       result = "全中, 恭喜頭獎"
     elif glodNumberCount == 5:
@@ -37,7 +35,11 @@ class rewardBot:
     elif glodNumberCount == 2 and isGlodNumberS:
       result = "中3個, 七獎 400元！"
 
-    return result  
+    gmsResult = "沒中"
+    if  (isGlodNumberS):
+      gmsResult = "有中"
+
+    return "自選號碼："+ str(targetNumber) + "\n 獎號： " + str(self.glodNumber) + ", 特別號：" + self.glodNumberS + "\n 結果：中" + str(glodNumberCount) + "個, 特別號：" + gmsResult + ", " + result  
 
   # 自選對獎
   def rewardFixedNum(self, glodNumber):

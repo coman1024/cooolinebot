@@ -15,7 +15,8 @@ class lotteryBot:
   
   #查詢最新
   def findNewNumber(self):
-    return self.getNumber(0)
+    self.getNumber(0)
+    return self.goldNumber
 
   #查詢by日期
   def findByDate(self, targetDate):

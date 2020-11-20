@@ -5,17 +5,17 @@ from linebot.models import (
     MessageTemplateAction
 )
 
-from feature import (
-    LotteryNumber, 
-    RewardNumber
-)
+from feature.LotteryNumber import lotteryBot
+from feature.RewardNumber import rewardBot
 
 class reward1:
-    label = "自選號碼對獎"
+    label = "自選號碼最新兌獎"
     text = "reward1"
     def reward():
-        # LotteryNumber = LotteryNumber.LotteryNumber()
-        return "還沒寫啦"
+        lottery_bot = lotteryBot()
+        reward_bot = rewardBot()
+        glodNumber = lottery_bot.findNewNumber()
+        return reward_bot.rewardFixedNum(glodNumber)
 
 class reward2:
     label = "電選號碼對獎"
