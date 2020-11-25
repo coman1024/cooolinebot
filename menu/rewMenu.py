@@ -33,7 +33,7 @@ class reward3:
     text = "reward3"
     def reward(targetNum):
         if(len(targetNum) == 0):
-            return "請輸入 reward3 號碼,隔開(01,02,03,04,05,06)"
+            raise RuntimeError("請輸入 reward3 號碼,隔開(01,02,03,04,05,06)")
         try:
             lottery_bot = lotteryBot()
             drawDate = lottery_bot.findNewestDate()
