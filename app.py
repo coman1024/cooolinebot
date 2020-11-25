@@ -97,64 +97,73 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     # if event is MessageEvent and message is TextMessage, then echo text
-    for event in events:
-        if isinstance(event, MessageEvent):
-            messageText = event.message.text
-            returnText = ""
-            if (messageText == "menu"):      
-                line_bot_api.reply_message(event.reply_token, featureMenu.menu)
-            
-            elif (messageText.startswith("query")):
-                messageText = messageText[len("query"):]
-                
-                if (messageText.startswith("M")):
-                    line_bot_api.reply_message(event.reply_token, queryMenu.menu)
-                elif (messageText.startswith("1")):
-                     line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
-                        alt_text = "最新中獎號碼",
-                        contents = query1.find()
-                    ))
-                elif (messageText.startswith("2")):
-                    returnText = query2.find(messageText[1:].strip())
-                elif (messageText.startswith("3")):   
-                    returnText = query3.find(messageText[1:].strip())
-                
-            elif (messageText.startswith("reward")):
-                messageText = messageText[len("reward"):]
 
-                if (messageText.startswith("M")):
-                    line_bot_api.reply_message(event.reply_token, rewMenu.menu)
-                elif (messageText.startswith("1")):
+    try:
+        for event in events:
+            if isinstance(event, MessageEvent):
+                messageText = event.message.text
+                returnText = ""
+                if (messageText == "menu"):      
+                    line_bot_api.reply_message(event.reply_token, featureMenu.menu)
+                
+                elif (messageText.startswith("query")):
+                    messageText = messageText[len("query"):]
                     
-                    line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
-                        alt_text = "自選對獎結果",
-                        contents = reward1.reward()
-                    ))
+                    if (messageText.startswith("M")):
+                        line_bot_api.reply_message(event.reply_token, queryMenu.menu)
+                    elif (messageText.startswith("1")):
+                        line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                            alt_text = "最新中獎號碼",
+                            contents = query1.find()
+                        ))
+                    elif (messageText.startswith("2")):
+                        line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                            alt_text = "日期查詢中獎號碼",
+                            contents = query2.find(messageText[1:].strip())
+                        ))
+                    elif (messageText.startswith("3")):   
+                        line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                            alt_text = "期數查詢中獎號碼",
+                            contents = query3.find(messageText[1:].strip())
+                        ))
+                    
+                elif (messageText.startswith("reward")):
+                    messageText = messageText[len("reward"):]
 
-                    # returnText = reward1.reward()
-                elif (messageText.startswith("2")):   
-                    returnText = reward2.reward()
-                elif (messageText.startswith("3")):    
-                    returnText = reward3.reward(messageText[1:].strip())
+                    if (messageText.startswith("M")):
+                        line_bot_api.reply_message(event.reply_token, rewMenu.menu)
+                    elif (messageText.startswith("1")):
+                        
+                        line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                            alt_text = "自選對獎結果",
+                            contents = reward1.reward()
+                        ))
 
-            elif (messageText.startswith("save")):
-                messageText = messageText[len("save"):]
+                        # returnText = reward1.reward()
+                    elif (messageText.startswith("2")):   
+                        returnText = reward2.reward()
+                    elif (messageText.startswith("3")):    
+                        returnText = reward3.reward(messageText[1:].strip())
 
-                if (messageText.startswith("M")):
-                    line_bot_api.reply_message(event.reply_token, saveMenu.menu)
-                elif (messageText.startswith("1")):
-                    returnText = save1.save(messageText[1:].strip())
-                elif (messageText.startswith("2")):   
-                    returnText = save2.save()
-                elif (messageText.startswith("3")):           
-                    returnText = save3.save(messageText[1:].strip())
-                
-            elif (messageText == "你罵我陰陽人爛屁股"):           
-                returnText = save4.save()
+                elif (messageText.startswith("save")):
+                    messageText = messageText[len("save"):]
 
-            if (returnText != ""):            
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))                   
-       
+                    if (messageText.startswith("M")):
+                        line_bot_api.reply_message(event.reply_token, saveMenu.menu)
+                    elif (messageText.startswith("1")):
+                        returnText = save1.save(messageText[1:].strip())
+                    elif (messageText.startswith("2")):   
+                        returnText = save2.save()
+                    elif (messageText.startswith("3")):           
+                        returnText = save3.save(messageText[1:].strip())
+                    
+                elif (messageText == "你罵我陰陽人爛屁股"):           
+                    returnText = save4.save()
+
+                if (returnText != ""):            
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))                   
+    except Exception as e:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(e)))                   
 
     return 'OK'
 

@@ -13,34 +13,36 @@ class query1:
         lottery_bot = lotteryBot()
         drawDate =  lottery_bot.findNewestDate()
         lottery_bot.findByDate(drawDate)
-        return template.queryResultTemplate(query1.label, drawDate, lottery_bot.goldNumber, lottery_bot.goldNumberS)
+        return template.queryResultTemplate(query1.label, "日期", drawDate, lottery_bot.goldNumber, lottery_bot.goldNumberS)
         
 class query2:
     label = "日期查詢"
     text = "query2"
     def find(date):
         if (len(date)== 0):
-            return "請輸入 query2 日期(YYY/MM/DD)"
+            raise  RuntimeError("請輸入 query2 日期(YYY/MM/DD)")
         try:
+            lottery_bot = lotteryBot()
             lottery_bot.findByDate(date)
-            return lottery_bot.numberToStr()
+            return template.queryResultTemplate(query2.label, "日期", date, lottery_bot.goldNumber, lottery_bot.goldNumberS)
         except Exception as e:
-            return str(e)
+            raise e
 
 class query3:
     label = "期數查詢"
     text = "query3"
     def find(term):
         if(len(term) == 0):
-            return "請輸入 query3 期數"
+            raise  RuntimeError("請輸入 query3 期數")
         try:
+            lottery_bot = lotteryBot()
             lottery_bot.findByTerm(term)     
-            return lottery_bot.numberToStr()
+            return template.queryResultTemplate(query3.label, "期數", term, lottery_bot.goldNumber, lottery_bot.goldNumberS)
         except Exception as e:
-            return str(e)
+            raise e
 
 class template: 
-    def queryResultTemplate(title, drawDate, goldNumber, goldNumberS):
+    def queryResultTemplate(title, searchType, searchValue, goldNumber, goldNumberS):
         contents = {
             "type": "bubble",
             "body": {
@@ -61,14 +63,14 @@ class template:
                     "contents": [
                     {
                         "type": "text",
-                        "text": "開獎日期：",
+                        "text": f'{searchType}：',
                         "size": "sm",
                         "color": "#aaaaaa",
                         "flex": 0
                     },
                     {
                         "type": "text",
-                        "text": drawDate,
+                        "text": searchValue,
                         "color": "#000000",
                         "size": "sm",
                         "align": "start"
