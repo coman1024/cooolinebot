@@ -16,6 +16,7 @@ from __future__ import unicode_literals
 
 import os
 import sys
+import re
 
 from argparse import ArgumentParser
 from flask import Flask, request, abort
@@ -119,12 +120,12 @@ def callback():
                     elif (messageText.startswith("2")):
                         line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
                             alt_text = "日期查詢中獎號碼",
-                            contents = query2.find(messageText[1:].strip())
+                            contents = query2.find(re.sub('[\s+]', '', messageText[1:]))
                         ))
                     elif (messageText.startswith("3")):   
                         line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
                             alt_text = "期數查詢中獎號碼",
-                            contents = query3.find(messageText[1:].strip())
+                            contents = query3.find(re.sub('[\s+]', '', messageText[1:]))
                         ))
                     
                 elif (messageText.startswith("reward")):
@@ -133,17 +134,19 @@ def callback():
                     if (messageText.startswith("M")):
                         line_bot_api.reply_message(event.reply_token, rewMenu.menu)
                     elif (messageText.startswith("1")):
-                        
+                    
                         line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
                             alt_text = "自選對獎結果",
                             contents = reward1.reward()
                         ))
-
-                        # returnText = reward1.reward()
                     elif (messageText.startswith("2")):   
                         returnText = reward2.reward()
                     elif (messageText.startswith("3")):    
-                        returnText = reward3.reward(messageText[1:].strip())
+                        
+                        line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                            alt_text = "輸入號碼對獎結果",
+                            contents = reward3.reward(re.sub('[\s+]', '', messageText[1:]))
+                        ))
 
                 elif (messageText.startswith("save")):
                     messageText = messageText[len("save"):]
@@ -151,11 +154,11 @@ def callback():
                     if (messageText.startswith("M")):
                         line_bot_api.reply_message(event.reply_token, saveMenu.menu)
                     elif (messageText.startswith("1")):
-                        returnText = save1.save(messageText[1:].strip())
+                        returnText = save1.save(re.sub('[\s+]', '', messageText[1:]))
                     elif (messageText.startswith("2")):   
                         returnText = save2.save()
                     elif (messageText.startswith("3")):           
-                        returnText = save3.save(messageText[1:].strip())
+                        returnText = save3.save(re.sub('[\s+]', '', messageText[1:]))
                     
                 elif (messageText == "你罵我陰陽人爛屁股"):           
                     returnText = save4.save()

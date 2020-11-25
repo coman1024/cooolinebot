@@ -26,8 +26,7 @@ class lotteryBot:
       if targetDate == item.text:
         targetIdx = idx
         break
-    
-    #TODO if targetIdx = 99 thorws error
+  
     if (targetIdx == 99):
       raise RuntimeError("找不到開獎日期")
     
@@ -44,8 +43,7 @@ class lotteryBot:
       if targetTern == item.text:
         targetIdx = idx
         break
-    
-    #TODO if targetIdx = 99 thorws error
+  
     if (targetIdx == 99):
       raise RuntimeError("找不到開獎期數")
     self.getNumber(targetIdx)
@@ -71,9 +69,4 @@ class lotteryBot:
 
     self.goldNumber = [num1.text, num2.text, num3.text, num4.text, num5.text, num6.text]
     self.goldNumberS = numS.text
-    
-
-  def numberToStr(self):
-    return self.goldNumber[0] + ", " + self.goldNumber[1] + ", "  + self.goldNumber[2] + ", "  + self.goldNumber[3] + ", "  + self.goldNumber[4] + ", "  + self.goldNumber[5] + ", 特別號：" + self.goldNumberS
-
   

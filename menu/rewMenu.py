@@ -21,10 +21,34 @@ class reward1:
         fixedNumber = rewardBot.fixedNumber
         result = rewardBot.rewardNm(goldNumber, goldNumberS, fixedNumber)
         
-        return reward1.flex_contents(fixedNumber, drawDate, goldNumber, goldNumberS, result)
+        return template.queryResultTemplate(reward1.label, fixedNumber, drawDate, goldNumber, goldNumberS, result)  
 
-    def flex_contents(fixedNumber, drawDate, goldNumber, goldNumberS, result):
-       
+class reward2:
+    label = "電選號碼對獎"
+    text =  "reward2"
+    def reward():
+        return "還沒寫啦"
+class reward3:
+    label = "輸入號碼對獎"
+    text = "reward3"
+    def reward(targetNum):
+        if(len(targetNum) == 0):
+            return "請輸入 reward3 號碼,隔開(01,02,03,04,05,06)"
+        try:
+            lottery_bot = lotteryBot()
+            drawDate = lottery_bot.findNewestDate()
+            lottery_bot.findByDate(drawDate)
+            goldNumber = lottery_bot.goldNumber
+            goldNumberS = lottery_bot.goldNumberS
+            targetNumList = targetNum.split(',', -1)
+            result = rewardBot.rewardNm(goldNumber, goldNumberS, targetNumList)
+            return template.queryResultTemplate(reward3.label, targetNumList, drawDate, goldNumber, goldNumberS, result) 
+        except Exception as e:
+            print(str(e))
+            raise e    
+
+class template: 
+    def queryResultTemplate(title, fixedNumber, drawDate, goldNumber, goldNumberS, result):
         contents = {
             "type": "bubble",
             "body": {
@@ -33,7 +57,7 @@ class reward1:
                 "contents": [
                 {
                     "type": "text",
-                    "text": "自選對獎",
+                    "text": title,
                     "weight": "bold",
                     "color": "#1DB446",
                     "size": "sm"
@@ -138,24 +162,7 @@ class reward1:
             }
         }   
                 
-        return contents        
-
-class reward2:
-    label = "電選號碼對獎"
-    text =  "reward2"
-    def reward():
-        return "還沒寫啦"
-class reward3:
-    label = "輸入號碼對獎"
-    text = "reward3"
-    def reward(targetNum):
-        if(len(targetNum) == 0):
-            return "請輸入 reward3 號碼,隔開(01,02,03,04,05,06)"
-        try:
-            return "還沒寫啦"
-        except Exception as e:
-            return str(e)     
-
+        return contents      
 menu = TemplateSendMessage(
     alt_text = '對獎功能選單',
     template = ButtonsTemplate(
