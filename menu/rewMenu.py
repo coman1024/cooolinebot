@@ -7,15 +7,138 @@ from linebot.models import (
 
 from feature.LotteryNumber import lotteryBot
 from feature.RewardNumber import rewardBot
+from feature import Util
 
 class reward1:
-    label = "自選號碼最新兌獎"
+    label = "自選號碼最新對獎結果"
     text = "reward1"
     def reward():
         lottery_bot = lotteryBot()
-        reward_bot = rewardBot()
-        glodNumber = lottery_bot.findNewNumber()
-        return reward_bot.rewardFixedNum(glodNumber)
+        drawDate = lottery_bot.findNewestDate()
+        lottery_bot.findByDate(drawDate)
+        goldNumber = lottery_bot.goldNumber
+        goldNumberS = lottery_bot.goldNumberS
+        fixedNumber = rewardBot.fixedNumber
+        result = rewardBot.rewardNm(goldNumber, goldNumberS, fixedNumber)
+        
+        return reward1.flex_contents(fixedNumber, drawDate, goldNumber, goldNumberS, result)
+
+    def flex_contents(fixedNumber, drawDate, goldNumber, goldNumberS, result):
+       
+        contents = {
+            "type": "bubble",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                {
+                    "type": "text",
+                    "text": "自選對獎",
+                    "weight": "bold",
+                    "color": "#1DB446",
+                    "size": "sm"
+                },
+                {
+                    "type": "text",
+                    "text": Util.formatNumberList(fixedNumber),
+                    "weight": "bold",
+                    "size": "lg",
+                    "margin": "md"
+                },
+                {
+                    "type": "separator",
+                    "margin": "xxl"
+                },
+                {
+                    "type": "box",
+                    "layout": "vertical",
+                    "margin": "xxl",
+                    "spacing": "sm",
+                    "contents": [
+                    {
+                        "type": "box",
+                        "layout": "horizontal",
+                        "contents": [
+                        {
+                            "type": "text",
+                            "text": "日期：",
+                            "size": "sm",
+                            "color": "#555555",
+                            "flex": 0
+                        },
+                        {
+                            "type": "text",
+                            "text": drawDate,
+                            "size": "sm",
+                            "color": "#111111",
+                            "align": "start"
+                        }
+                        ]
+                    },
+                    {
+                        "type": "box",
+                        "layout": "horizontal",
+                        "contents": [
+                        {
+                            "type": "text",
+                            "text": "中獎號碼：",
+                            "size": "sm",
+                            "color": "#555555",
+                            "flex": 0
+                        },
+                        {
+                            "type": "text",
+                            "text": Util.formatNumberList(goldNumber),
+                            "size": "sm",
+                            "color": "#111111",
+                            "align": "start"
+                        }
+                        ]
+                    },
+                    {
+                        "type": "box",
+                        "layout": "horizontal",
+                        "contents": [
+                        {
+                            "type": "text",
+                            "text": "特別號：",
+                            "size": "sm",
+                            "color": "#555555",
+                            "flex": 0
+                        },
+                        {
+                            "type": "text",
+                            "text": goldNumberS,
+                            "size": "sm",
+                            "color": "#111111",
+                            "align": "start"
+                        }
+                        ]
+                    },
+                    {
+                        "type": "separator",
+                        "margin": "xxl"
+                    },
+                    {
+                        "type": "box",
+                        "layout": "horizontal",
+                        "contents": [
+                        {
+                            "type": "text",
+                            "text": result,
+                            "size": "sm",
+                            "color": "#555555",
+                            "flex": 0
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            }
+        }   
+                
+        return contents        
 
 class reward2:
     label = "電選號碼對獎"

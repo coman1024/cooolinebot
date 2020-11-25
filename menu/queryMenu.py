@@ -5,14 +5,15 @@ from linebot.models import (
 )
 
 from feature.LotteryNumber import lotteryBot
-lottery_bot = lotteryBot()
+from feature import Util
 class query1:
     label = "查詢最新中獎號碼"
     text = "query1"
     def find():
-        date =  lottery_bot.findNewDate()
-        lottery_bot.findByDate(date)
-        return "最新一期得獎號碼：\n" + date + '\n' + lottery_bot.numberToStr()
+        lottery_bot = lotteryBot()
+        drawDate =  lottery_bot.findNewestDate()
+        lottery_bot.findByDate(drawDate)
+        return template.queryResultTemplate(query1.label, drawDate, lottery_bot.goldNumber, lottery_bot.goldNumberS)
         
 class query2:
     label = "日期查詢"
@@ -37,6 +38,89 @@ class query3:
             return lottery_bot.numberToStr()
         except Exception as e:
             return str(e)
+
+class template: 
+    def queryResultTemplate(title, drawDate, goldNumber, goldNumberS):
+        contents = {
+            "type": "bubble",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                {
+                    "type": "text",
+                    "text": title,
+                    "weight": "bold",
+                    "color": "#1DB446",
+                    "size": "sm"
+                },
+                {
+                    "type": "box",
+                    "layout": "horizontal",
+                    "margin": "md",
+                    "contents": [
+                    {
+                        "type": "text",
+                        "text": "開獎日期：",
+                        "size": "sm",
+                        "color": "#aaaaaa",
+                        "flex": 0
+                    },
+                    {
+                        "type": "text",
+                        "text": drawDate,
+                        "color": "#000000",
+                        "size": "sm",
+                        "align": "start"
+                    }
+                    ]
+                },
+                {
+                    "type": "box",
+                    "layout": "horizontal",
+                    "margin": "md",
+                    "contents": [
+                    {
+                        "type": "text",
+                        "text": "中獎號碼：",
+                        "size": "sm",
+                        "color": "#aaaaaa",
+                        "flex": 0
+                    },
+                    {
+                        "type": "text",
+                        "text": Util.formatNumberList(goldNumber),
+                        "color": "#000000",
+                        "size": "sm",
+                        "align": "start"
+                    }
+                    ]
+                },
+                {
+                    "type": "box",
+                    "layout": "horizontal",
+                    "margin": "md",
+                    "contents": [
+                    {
+                        "type": "text",
+                        "text": "特別號：",
+                        "size": "sm",
+                        "color": "#aaaaaa",
+                        "flex": 0
+                    },
+                    {
+                        "type": "text",
+                        "text": goldNumberS,
+                        "color": "#000000",
+                        "size": "sm",
+                        "align": "start"
+                    }
+                    ]
+                }
+                ]
+            }
+        }
+        return contents
 
 menu = TemplateSendMessage(
     alt_text = '查詢號碼功能選單',

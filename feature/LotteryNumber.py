@@ -10,13 +10,10 @@ lottoHistoryTable = soup.find("table", id="Lotto649Control_history_dlQuery")
 
 class lotteryBot:
   goldNumber = []
-  def __init__(slef):
-    print("LotteryNumber!")
-  
-  #查詢最新
-  def findNewNumber(self):
-    self.getNumber(0)
-    return self.goldNumber
+  goldNumberS = ""
+
+  def __init__(self):
+    pass
 
   #查詢by日期
   def findByDate(self, targetDate):
@@ -33,6 +30,7 @@ class lotteryBot:
     #TODO if targetIdx = 99 thorws error
     if (targetIdx == 99):
       raise RuntimeError("找不到開獎日期")
+    
     self.getNumber(targetIdx)
 
   #查詢by期數
@@ -53,11 +51,11 @@ class lotteryBot:
     self.getNumber(targetIdx)
   
 
-  def findNewDate(self):
+  def findNewestDate(self):
     date = lottoHistoryTable.find("span", id = re.compile("Lotto649Control_history_dlQuery_L649_DDate_0"))
     return date.text
 
-  def findNewTern(self):
+  def findNewestTern(self):
     tern = lottoHistoryTable.find("span", id = re.compile("Lotto649Control_history_dlQuery_L649_DrawTerm_0"))
     return tern.text
 
@@ -71,10 +69,11 @@ class lotteryBot:
     numS = lottoHistoryTable.find("span", id = ("Lotto649Control_history_dlQuery_SNo_" + str(targetIdx)))
     
 
-    goldNumber = [num1.text, num2.text, num3.text, num4.text, num5.text, num6.text, numS.text]
-    self.goldNumber = goldNumber
+    self.goldNumber = [num1.text, num2.text, num3.text, num4.text, num5.text, num6.text]
+    self.goldNumberS = numS.text
+    
 
   def numberToStr(self):
-    return self.goldNumber[0] + ", " + self.goldNumber[1] + ", "  + self.goldNumber[2] + ", "  + self.goldNumber[3] + ", "  + self.goldNumber[4] + ", "  + self.goldNumber[5] + ", 特別號：" + self.goldNumber[6]
+    return self.goldNumber[0] + ", " + self.goldNumber[1] + ", "  + self.goldNumber[2] + ", "  + self.goldNumber[3] + ", "  + self.goldNumber[4] + ", "  + self.goldNumber[5] + ", 特別號：" + self.goldNumberS
 
   

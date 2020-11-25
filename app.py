@@ -32,6 +32,7 @@ from linebot.models import (
     TextSendMessage,
     TemplateSendMessage,
     ButtonsTemplate,
+    FlexSendMessage,
     MessageTemplateAction
 )
 
@@ -109,7 +110,10 @@ def callback():
                 if (messageText.startswith("M")):
                     line_bot_api.reply_message(event.reply_token, queryMenu.menu)
                 elif (messageText.startswith("1")):
-                    returnText = query1.find()
+                     line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                        alt_text = "最新中獎號碼",
+                        contents = query1.find()
+                    ))
                 elif (messageText.startswith("2")):
                     returnText = query2.find(messageText[1:].strip())
                 elif (messageText.startswith("3")):   
@@ -121,7 +125,13 @@ def callback():
                 if (messageText.startswith("M")):
                     line_bot_api.reply_message(event.reply_token, rewMenu.menu)
                 elif (messageText.startswith("1")):
-                    returnText = reward1.reward()
+                    
+                    line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                        alt_text = "自選對獎結果",
+                        contents = reward1.reward()
+                    ))
+
+                    # returnText = reward1.reward()
                 elif (messageText.startswith("2")):   
                     returnText = reward2.reward()
                 elif (messageText.startswith("3")):    
