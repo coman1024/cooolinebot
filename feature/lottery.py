@@ -42,16 +42,10 @@ class LotteryTicket:
 def lottery649_checker(lotto: Lottery649, ticket: LotteryTicket):
     winning_count = len(set(lotto.winning_numbers).intersection(set(ticket.pick_numbers)))
     win_special_number = lotto.special_number in ticket.pick_numbers
-    print("Lottery649 numbers are:", lotto.winning_numbers, "and", lotto.special_number)
-    print("Your picking numbers are:", ticket.pick_numbers)
 
     winning_tuple = (winning_count, win_special_number)
     prize = lotto.prizes[winning_tuple] if winning_tuple in lotto.prizes else None
-    if prize:
-        print("You win the ", prize.__dict__)
-    else:
-        print("LOSE QQQQQ")
-    #print("")
+    return prize
 
 def scrape_lottery649_lastest():
     response = requests.get("https://www.taiwanlottery.com.tw/lotto/lotto649/history.aspx")
@@ -97,7 +91,7 @@ if __name__ == "__main__":
         LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [45, 100, 101, 102, 29, 44]),
         LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [100, 101, 102, 103, 104, 105])
     ]
-    
+
     for ticket in tickets:
-        lottery649_checker(lotto, ticket)
-        print("")
+        prize = lottery649_checker(lotto, ticket)
+        print(prize.__dict__ if prize else "LOSE")
