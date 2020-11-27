@@ -101,6 +101,11 @@ def callback():
 
     try:
         for event in events:
+            if not isinstance(event, MessageEvent):
+                continue
+            if not isinstance(event.message, TextMessage):
+                continue
+
             if isinstance(event, MessageEvent):
                 messageText = event.message.text
                 returnText = ""
