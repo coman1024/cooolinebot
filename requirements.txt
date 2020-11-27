@@ -3,3 +3,4 @@ flask
 gunicorn
 beautifulsoup4
 requests
+psycopg2
