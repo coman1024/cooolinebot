@@ -50,7 +50,6 @@ class reward2:
             targetNum = {}
             result = ""
             try:
-                print(obj[0])
                 lottery_bot.findByDate(obj[0])
                 goldNumber = lottery_bot.goldNumber
                 goldNumberS = lottery_bot.goldNumberS
@@ -62,7 +61,6 @@ class reward2:
                 targetNum = obj[1].split(',', -1)
                 result = str(e)
             
-            print(goldNumber)
             resultObj["date"] = obj[0]
             resultObj["goldNumber"] = goldNumber
             resultObj["goldNumberS"] = goldNumberS
@@ -217,7 +215,6 @@ class template:
         }
         bubbleTemplate = bubleTemplateContents["contents"]
         contents["contents"] = bubbleTemplate
-        print(contents)
         return contents
     def getResultBubbleTemplate(targetDate, resultList):
         contents = {"contents":[]}
