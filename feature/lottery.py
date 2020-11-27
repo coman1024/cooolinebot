@@ -2,12 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 class LotteryPrize:
-    def __init__(self, winning_rule: str, winning_bets: int, prize_money: int, next_prize_money: int):
-        self.winning_rule = winning_rule
-        self.winning_bets = winning_bets
+    def __init__(self, title: str, description: str, winners: int, prize_money: int, next_prize_money: int):
+        self. title = title
+        self.description = description
+        self.winners = winners
         self.prize_money = prize_money
         self.next_prize_money = next_prize_money
 
@@ -15,7 +16,7 @@ class LotteryItem(Enum):
     Lottery649 = "lottery649"
 
 class Lottery:
-    def __init__(self, item: LotteryItem, period: str, drawing_date: str, due_date: str, sales_money: int, total_prize: int, prizes: Dict[str, LotteryPrize]):
+    def __init__(self, item: LotteryItem, period: str, drawing_date: str, due_date: str, sales_money: int, total_prize: int, prizes: Dict[Tuple[int, int], LotteryPrize]):
         self.item = item
         self.period = period
         self.drawing_date = drawing_date
@@ -41,28 +42,16 @@ class LotteryTicket:
 def lottery649_checker(lotto: Lottery649, ticket: LotteryTicket):
     winning_count = len(set(lotto.winning_numbers).intersection(set(ticket.pick_numbers)))
     win_special_number = lotto.special_number in ticket.pick_numbers
-    print("Lottery649 numbers are:", lotto.winning_numbers, " and", lotto.special_number)
+    print("Lottery649 numbers are:", lotto.winning_numbers, "and", lotto.special_number)
     print("Your picking numbers are:", ticket.pick_numbers)
-    prize_dict = {
-        (6, 0): "jackpot",
-        (5, 1): "2nd_prize",
-        (5, 0): "3rd_prize",
-        (4, 1): "4th_prize",
-        (4, 0): "5th_prize",
-        (3, 1): "6th_prize",
-        (2, 1): "7th_prize",
-        (3, 0): "8th_prize"
-    }
-    winning_tuple = (winning_count, win_special_number)
-    prize_money = 0
-    if (winning_tuple in prize_dict):
-        prize = prize_dict[winning_tuple]
-        if (prize in lotto.prizes):
-            prize_money = lotto.prizes[prize]
-    else:
-        prize = "LOSE QQQQQ"
 
-    print("Result:", prize, " prize money:", prize_money)
+    winning_tuple = (winning_count, win_special_number)
+    prize = lotto.prizes[winning_tuple] if winning_tuple in lotto.prizes else None
+    if prize:
+        print("You win the ", prize.__dict__)
+    else:
+        print("LOSE QQQQQ")
+    #print("")
 
 def scrape_lottery649_lastest():
     response = requests.get("https://www.taiwanlottery.com.tw/lotto/lotto649/history.aspx")
@@ -79,6 +68,36 @@ def scrape_lottery649_by_date(date):
     pass
 
 if __name__ == "__main__":
-    lotto = Lottery649([1,2,3,4,5,7], 9, item=LotteryItem.Lottery649, period="109000102", drawing_date="109/11/24", due_date="110/02/24", sales_money=120024550, total_prize=318009096, prizes={"jackpot": 274678022, "second_prize": 2028973})
-    ticket = LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [1,2,3,4,7,5])
-    lottery649_checker(lotto, ticket)
+    lotto = Lottery649(
+        [45, 29, 36, 5, 38, 44],
+        23,
+        item = LotteryItem.Lottery649,
+        period = "109000102",
+        drawing_date = "109/11/24",
+        due_date = "110/02/24",
+        sales_money = 120024550, 
+        total_prize = 318009096,
+        prizes = {
+            (6, 0): LotteryPrize("jackpot", "6+0", 0, 0, 274678022),
+            (5, 1): LotteryPrize("2nd prize", "5+1", 3, 2028973, 0),
+            (5, 0): LotteryPrize("3rd prize", "5+0", 42, 56439, 0),
+            (4, 1): LotteryPrize("4th prize", "4+1", 110, 13853, 0),
+            (4, 0): LotteryPrize("5th prize", "4+0", 1949, 2000, 0),
+            (3, 1): LotteryPrize("6th prize", "3+1", 2765, 1000, 0),
+            (2, 1): LotteryPrize("7th prize", "2+1", 30161, 400, 0),
+            (3, 0): LotteryPrize("8th prize", "3+0", 36556, 400, 0)
+        }
+    )
+
+    tickets = [
+        LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [45, 29, 36, 5, 38, 44]),
+        LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [23, 29, 36, 5, 38, 44]),
+        LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [45, 456, 36, 5, 123, 44]),
+        LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [45, 100, 101, 102, 38, 44]),
+        LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [45, 100, 101, 102, 29, 44]),
+        LotteryTicket(LotteryItem.Lottery649, "109/11/22", "109/11/24", 50, [100, 101, 102, 103, 104, 105])
+    ]
+    
+    for ticket in tickets:
+        lottery649_checker(lotto, ticket)
+        print("")
