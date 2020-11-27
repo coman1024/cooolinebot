@@ -1,6 +1,5 @@
 
 class rewardBot:
-  fixedNumber = ["6", "12", "24", "25", "33", "35"]
    
   def rewardNm(goldNumber, goldNumberS, targetNumber):
 

@@ -4,6 +4,8 @@ from linebot.models import (
     MessageTemplateAction
 )
 
+from feature import DBNumber
+
  
 class save1():
     label = "儲存自選號碼"
@@ -18,7 +20,7 @@ class save2():
     label = "自選號碼查詢"
     text =  "save2"
     def save():
-        return "還沒寫啦"
+        return DBNumber.getfixedNm()
 
 class save3():
     label = "儲存電選號碼"

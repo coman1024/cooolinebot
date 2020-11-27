@@ -37,6 +37,7 @@ from linebot.models import (
     MessageTemplateAction
 )
 
+
 from menu import (
     featureMenu,
     queryMenu,
@@ -66,6 +67,8 @@ from menu.saveMenu import(
     save4
 )
 
+
+
 app = Flask(__name__)
 print("sio start app !!")
 # get channel_secret and channel_access_token from your environment variable
@@ -82,6 +85,7 @@ line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
 defaultText = "查無指令"
+
 
 
 @app.route("/callback", methods=['POST'])
@@ -145,7 +149,10 @@ def callback():
                             contents = reward1.reward()
                         ))
                     elif (messageText.startswith("2")):   
-                        returnText = reward2.reward()
+                            line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                            alt_text = "電腦選號對獎結果",
+                            contents = reward2.reward(re.sub('[\s+]', '', messageText[1:]))
+                        ))
                     elif (messageText.startswith("3")):    
                         
                         line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
@@ -169,13 +176,15 @@ def callback():
                     returnText = save4.save()
 
                 if (returnText != ""):            
-                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))                   
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
+                             
     except Exception as e:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(e)))                   
 
     return 'OK'
 
 if __name__ == "__main__":
+    
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
     )
