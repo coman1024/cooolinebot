@@ -7,7 +7,7 @@ import itertools
 
 class LotteryPrize:
     def __init__(self, title: str, description: str, winners: int, prize_money: int, next_prize_money: int):
-        self. title = title
+        self.title = title
         self.description = description
         self.winners = winners
         self.prize_money = prize_money
@@ -88,35 +88,8 @@ def scrape_lottery649_by_date(date):
     pass
 
 if __name__ == "__main__":
+    ticket = LotteryTicket(LotteryItem.Lottery649, "109/11/27", "109/11/27", 50, [1, 2, 3, 4, 5, 6])
+    print("You buy a ticket", ticket.__dict__)
+
     last_lotto = scrape_lottery649_lastest()
-    test_lotto = Lottery649(
-        winning_numbers=[35, 30, 26, 19, 1, 48],
-        special_number=11,
-        item=LotteryItem.Lottery649,
-        period='109000103',
-        drawing_date='109/11/27',
-        due_date='110/03/02',
-        sales_money='122,995,950',
-        total_prize='343,555,754',
-        prizes={
-            (6, 0): LotteryPrize(title='頭獎', description='6個', winners='0', prize_money='0', next_prize_money='301,244,982'),
-            (5, 1): LotteryPrize(title='貳獎', description='任5個＋特別號', winners='1', prize_money='2,105,917', next_prize_money='0'),
-            (5, 0): LotteryPrize(title='參獎', description='任5個', winners='39', prize_money='58,151', next_prize_money='0'),
-            (4, 1): LotteryPrize(title='肆獎', description='任4個＋特別號', winners='111', prize_money='13,134', next_prize_money='0'),
-            (4, 0): LotteryPrize(title='伍獎', description='任4個', winners='2,099', prize_money='2,000', next_prize_money=None),
-            (3, 1): LotteryPrize(title='陸獎', description='任3個＋特別號', winners='3,161', prize_money='1,000', next_prize_money=None),
-            (2, 1): LotteryPrize(title='柒獎', description='任2個＋特別號', winners='33,588', prize_money='400', next_prize_money=None),
-            (3, 0): LotteryPrize(title='普獎', description='任3個', winners='39,212', prize_money='400', next_prize_money=None)
-        }
-    )
-
-    tickets = [
-        LotteryTicket(LotteryItem.Lottery649, "109/11/27", "109/11/27", 50, [35, 30, 26, 19, 1, 48]),
-        LotteryTicket(LotteryItem.Lottery649, "109/11/27", "109/11/27", 50, [35, 30, 26, 19, 1, 11]),
-        LotteryTicket(LotteryItem.Lottery649, "109/11/27", "109/11/27", 50, [35, 30, 26, 19, 1, 100]),
-        LotteryTicket(LotteryItem.Lottery649, "109/11/27", "109/11/27", 50, [101, 102, 103, 104, 105, 106])
-    ]
-
-    for ticket in tickets:
-        prize = lottery649_checker(test_lotto, ticket)
-        print(prize.__dict__ if prize else "LOSE")
+    print("\nLast Lottery649 is", last_lotto.__dict__)
