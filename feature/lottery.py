@@ -58,22 +58,35 @@ def __generate_lottery649_prizes(winners, prize_money_list, accumalted_list):
     return {k : LotteryPrize(t, d, w, m, a) for (k, t, d, w, m, a) in itertools.zip_longest(keys, titles, desc, winners, prize_money_list, accumalted_list, fillvalue=None)}
 
 def scrape_lottery649(index):
-    
+   
     categs = [tag.string for tag in soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_L649_Categ[ABC][345]_{index}"))]
     labels = [tag.string for tag in soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_Label[0-9]+_{index}"))]
+  
+    winners = []
+    prize_money_list = []
+    accumalted_list = []
+    if index % 2 == 0:
+        winners.extend(categs[0:3])
+        winners.extend(labels[0:5])
 
-    winners = categs[0:3]
-    winners.extend(labels[0:5])
+        prize_money_list.extend(categs[3])
+        prize_money_list.extend(labels[5:12])
 
-    prize_money_list = [categs[3]]
-    prize_money_list.extend(labels[5:12])
+        accumalted_list.extend(categs[4])
+        accumalted_list.extend(labels[12:])
+    else:
+        winners.extend(categs[0])
+        winners.extend(labels[0:6])
 
-    accumalted_list = [categs[4]]
-    accumalted_list.extend(labels[12:])
+        prize_money_list.extend(categs[1])
+        prize_money_list.extend(labels[5:13])
+
+        accumalted_list.extend(categs[2])
+        accumalted_list.extend(labels[13:])
 
     return Lottery649(
                 winning_numbers = [int(tag.string) for tag in soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_SNo[0-7]_{index}"))],
-                special_number = int(soup.find(id=f"Lotto649Control_history_dlQuery_No7_0").string),
+                special_number = int(soup.find(id=f"Lotto649Control_history_dlQuery_No7_{index}").string),
                 item = LotteryItem.Lottery649,
                 period = soup.find(id=f"Lotto649Control_history_dlQuery_L649_DrawTerm_{index}").string,
                 drawing_date = soup.find(id=f"Lotto649Control_history_dlQuery_L649_DDate_{index}").string,
@@ -89,7 +102,15 @@ def scrape_lottery649_lastest():
 
 
 def scrape_lottery649_by_seq(seq):
-    pass
+    drawing_seq_list = [tag.string for tag in soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_L649_DrawTerm_[0-9]"))]
+    targetIdx = 99
+    for idx, item  in enumerate(drawing_seq_list):
+        if seq == item:
+            targetIdx = idx
+            break
+    if (targetIdx == 99):
+      raise RuntimeError("找不到開獎期數")
+    return scrape_lottery649(targetIdx)
 
 def scrape_lottery649_by_date(date):
     drawing_date_list = [tag.string for tag in soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_L649_DDate_[0-9]"))]
