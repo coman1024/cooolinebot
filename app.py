@@ -178,7 +178,7 @@ def callback():
                 if (returnText != ""):            
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
                              
-    except Exception as e:
+    except RuntimeError as e:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(e)))                   
 
     return 'OK'
