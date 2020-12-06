@@ -4,3 +4,4 @@ gunicorn
 beautifulsoup4
 requests
 psycopg2
+APScheduler==3.6.3
