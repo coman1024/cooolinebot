@@ -67,7 +67,7 @@ from menu.saveMenu import(
     save4
 )
 
-
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 print("sio start app !!")
@@ -86,7 +86,15 @@ parser = WebhookParser(channel_secret)
 
 defaultText = "查無指令"
 
+scheduler = BackgroundScheduler()
+subscriber_ids = set()
 
+@scheduler.scheduled_job('cron', day_of_week='tue,fri', hour='22', minute='10', timezone='Asia/Taipei')
+def lottery649_drawing_job():
+    for id in subscriber_ids:
+        line_bot_api.push_message(id, FlexSendMessage(alt_text="最新中獎號碼", contents=query1.find()))
+
+scheduler.start()
 
 @app.route("/callback", methods=['POST'])
 def callback():
