@@ -24,12 +24,15 @@ class reward1:
     text = "reward1"
     def reward():
         lottery649 = lottery.scrape_lottery649_lastest()
-        fixedNumber = DBNumber.getfixedNm()
+        fixedNumbers = DBNumber.getfixedNm()
         
-        ticket = LotteryTicket(LotteryItem.Lottery649, "", lottery649.drawing_date, 50, fixedNumber)
-        result = lottery.lottery649_checker(lottery649, ticket)
-        
-        return template.queryResultTemplate(reward1.label, fixedNumber, lottery649.drawing_date, lottery649.winning_numbers, lottery649.special_number, result)  
+        ticket = LotteryTicket(LotteryItem.Lottery649, "", lottery649.drawing_date, 50, fixedNumbers)
+        lotteryPrize = lottery.lottery649_checker(lottery649, ticket)
+        result = "槓龜"
+        if (lotteryPrize != None):
+            result = f"{lotteryPrize.title} {lotteryPrize.description}"
+        resultObj = TemplateObj(reward1.label, fixedNumbers, lottery649.drawing_date, lottery649.winning_numbers, lottery649.special_number, result)  
+        return template.queryResultTemplate(resultObj)
 
 class reward2:
     label = "電選號碼對獎"
@@ -48,7 +51,10 @@ class reward2:
             ticket = LotteryTicket(LotteryItem.Lottery649, "", drawing_date, 50, pick_numbers)
             try:
                 lottery649 = lottery.scrape_lottery649_by_date(drawing_date)
-                result = lottery.lottery649_checker(lottery649, ticket)
+                lotteryPrize = lottery.lottery649_checker(lottery649, ticket)
+                result = "槓龜"
+                if (lotteryPrize != None):
+                    result = f"{lotteryPrize.title} {lotteryPrize.description}"
                 resultObj = TemplateObj(reward2.label, ticket.pick_numbers, drawing_date, lottery649.winning_numbers, lottery649.special_number, result)
             except Exception as e:
                 result = str(e)
@@ -66,14 +72,16 @@ class reward3:
         if(len(targetNum) == 0):
             raise RuntimeError("請輸入 reward3 號碼,隔開(01,02,03,04,05,06)")
         try:
-            lottery_bot = lotteryBot()
-            drawDate = lottery_bot.findNewestDate()
-            lottery_bot.findByDate(drawDate)
-            goldNumber = lottery_bot.goldNumber
-            goldNumberS = lottery_bot.goldNumberS
-            targetNumList = targetNum.split(',', -1)
-            result = rewardBot.rewardNm(goldNumber, goldNumberS, targetNumList)
-            return template.queryResultTemplate(reward3.label, targetNumList, drawDate, goldNumber, goldNumberS, result) 
+            lottery649 = lottery.scrape_lottery649_lastest()
+            pick_numbers = Util.toIntList(targetNum.split(',', -1))
+            ticket = LotteryTicket(LotteryItem.Lottery649, "", lottery649.drawing_date, 50, pick_numbers)
+            lotteryPrize = lottery.lottery649_checker(lottery649, ticket)
+            result = "槓龜"
+            if (lotteryPrize != None):
+                result = f"{lotteryPrize.title} {lotteryPrize.description}"
+            resultObj = TemplateObj(reward3.label, ticket.pick_numbers, lottery649.drawing_date, lottery649.winning_numbers, lottery649.special_number, result)  
+            return template.queryResultTemplate(resultObj)
+
         except Exception as e:
             print(str(e))
             raise e    
@@ -88,7 +96,7 @@ class TemplateObj:
         self.result = result
 
 class template: 
-    def queryResultTemplate(title, pick_numbers, drawing_date, winning_numbers, special_number, result):
+    def queryResultTemplate(tempObj:TemplateObj):
         contents = {
             "type": "bubble",
             "body": {
@@ -97,14 +105,14 @@ class template:
                 "contents": [
                 {
                     "type": "text",
-                    "text": title,
+                    "text": tempObj.title,
                     "weight": "bold",
                     "color": "#1DB446",
                     "size": "sm"
                 },
                 {
                     "type": "text",
-                    "text": Util.formatNumberList(pick_numbers),
+                    "text": Util.formatNumberList(tempObj.pick_numbers),
                     "weight": "bold",
                     "size": "lg",
                     "margin": "md"
@@ -132,7 +140,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": drawing_date,
+                            "text": tempObj.drawing_date,
                             "size": "sm",
                             "color": "#111111",
                             "align": "start"
@@ -152,7 +160,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": Util.formatNumberList(winning_numbers),
+                            "text": Util.formatNumberList(tempObj.winning_numbers),
                             "size": "sm",
                             "color": "#111111",
                             "align": "start"
@@ -172,7 +180,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": f"{special_number}",
+                            "text": f"{tempObj.special_number}",
                             "size": "sm",
                             "color": "#111111",
                             "align": "start"
@@ -189,7 +197,7 @@ class template:
                         "contents": [
                         {
                             "type": "text",
-                            "text": result,
+                            "text": tempObj.result,
                             "size": "sm",
                             "color": "#555555",
                             "flex": 0
