@@ -48,7 +48,7 @@ def lottery649_checker(lotto: Lottery649, ticket: LotteryTicket):
     win_special_number = lotto.special_number in ticket.pick_numbers
 
     winning_tuple = (winning_count, win_special_number)
-    prize = lotto.prizes[winning_tuple] if winning_tuple in lotto.prizes else None
+    prize = lotto.prizes[winning_tuple] if winning_tuple in lotto.prizes else "槓龜"
     return prize
 
 def __generate_lottery649_prizes(winners, prize_money_list, accumalted_list):

@@ -6,25 +6,30 @@ from linebot.models import (
 )
 
 from feature.LotteryNumber import lotteryBot
+from feature import lottery
+from feature.lottery import (
+    LotteryItem,
+    Lottery649,
+    LotteryTicket
+)
+
 from feature.RewardNumber import rewardBot
 from feature import DBNumber
 from feature import Util
 
+from typing import Dict, List, Tuple
 
 class reward1:
     label = "自選號碼最新對獎結果"
     text = "reward1"
     def reward():
-        lottery_bot = lotteryBot()
-        drawDate = lottery_bot.findNewestDate()
-        lottery_bot.findByDate(drawDate)
-        goldNumber = lottery_bot.goldNumber
-        goldNumberS = lottery_bot.goldNumberS
-        fixedNumber = DBNumber.getfixedNm().split(',', -1)
+        lottery649 = lottery.scrape_lottery649_lastest()
+        fixedNumber = DBNumber.getfixedNm()
         
-        result = rewardBot.rewardNm(goldNumber, goldNumberS, fixedNumber)
+        ticket = LotteryTicket(LotteryItem.Lottery649, "", lottery649.drawing_date, 50, fixedNumber)
+        result = lottery.lottery649_checker(lottery649, ticket)
         
-        return template.queryResultTemplate(reward1.label, fixedNumber, drawDate, goldNumber, goldNumberS, result)  
+        return template.queryResultTemplate(reward1.label, fixedNumber, lottery649.drawing_date, lottery649.winning_numbers, lottery649.special_number, result)  
 
 class reward2:
     label = "電選號碼對獎"
@@ -32,45 +37,28 @@ class reward2:
     def reward(targetDate):
         if(len(targetDate) == 0):
             raise RuntimeError("請輸入 reward2 日期")
-        lottery_bot = lotteryBot()
+        resultList = []
         keyinNumberList = DBNumber.getKeyinNm(targetDate)
-        resultList = {
-            "resultList":[]
-        }
+        if(len(keyinNumberList) == 0):
+            raise RuntimeError("無此日期")
+
         for obj in keyinNumberList:
-            resultObj = {
-                "date": "",
-                "goldNumber": [],
-                "goldNumberS": "",
-                "keyinNum": [],
-                "result": ""
-            }
-            goldNumber = {}
-            goldNumberS = ""
-            targetNum = {}
-            result = ""
+            drawing_date = obj[0]
+            pick_numbers = obj[1].split(',', -1)
+            ticket = LotteryTicket(LotteryItem.Lottery649, "", drawing_date, 50, pick_numbers)
             try:
-                lottery_bot.findByDate(obj[0])
-                goldNumber = lottery_bot.goldNumber
-                goldNumberS = lottery_bot.goldNumberS
-                targetNum = obj[1].split(',', -1)
-                result = rewardBot.rewardNm(goldNumber, goldNumberS, targetNum)
+                lottery649 = lottery.scrape_lottery649_by_date(drawing_date)
+                result = lottery.lottery649_checker(lottery649, ticket)
+                resultObj = TemplateObj(reward2.label, ticket.pick_numbers, drawing_date, lottery649.winning_numbers, lottery649.special_number, result)
             except Exception as e:
-                goldNumber = []
-                goldNumberS = " "
-                targetNum = obj[1].split(',', -1)
                 result = str(e)
-            
-            resultObj["date"] = obj[0]
-            resultObj["goldNumber"] = goldNumber
-            resultObj["goldNumberS"] = goldNumberS
-            resultObj["keyinNum"]= targetNum
-            resultObj["result"]= result
+                resultObj = TemplateObj(reward2.label, ticket.pick_numbers, drawing_date, " ", " ", result)
 
-            resultList["resultList"].append(resultObj)
+            resultList.append(resultObj)
+         
 
-        return template.queryResultListTemplate(targetDate, resultList)  
-        
+        return template.queryResultListTemplate(resultList)  
+
 class reward3:
     label = "輸入號碼對獎"
     text = "reward3"
@@ -90,8 +78,17 @@ class reward3:
             print(str(e))
             raise e    
 
+class TemplateObj:
+    def __init__(self, title: str, pick_numbers: List[int], drawing_date: str, winning_numbers: List[int], special_number:int, result:str):
+        self.title = title
+        self.pick_numbers = pick_numbers
+        self.drawing_date = drawing_date
+        self.winning_numbers = winning_numbers
+        self.special_number = special_number
+        self.result = result
+
 class template: 
-    def queryResultTemplate(title, fixedNumber, drawDate, goldNumber, goldNumberS, result):
+    def queryResultTemplate(title, pick_numbers, drawing_date, winning_numbers, special_number, result):
         contents = {
             "type": "bubble",
             "body": {
@@ -107,7 +104,7 @@ class template:
                 },
                 {
                     "type": "text",
-                    "text": Util.formatNumberList(fixedNumber),
+                    "text": Util.formatNumberList(pick_numbers),
                     "weight": "bold",
                     "size": "lg",
                     "margin": "md"
@@ -135,7 +132,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": drawDate,
+                            "text": drawing_date,
                             "size": "sm",
                             "color": "#111111",
                             "align": "start"
@@ -155,7 +152,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": Util.formatNumberList(goldNumber),
+                            "text": Util.formatNumberList(winning_numbers),
                             "size": "sm",
                             "color": "#111111",
                             "align": "start"
@@ -175,7 +172,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": goldNumberS,
+                            "text": f"{special_number}",
                             "size": "sm",
                             "color": "#111111",
                             "align": "start"
@@ -207,8 +204,8 @@ class template:
                 
         return contents
 
-    def queryResultListTemplate(targetDate, resultList):
-        bubleTemplateContents = template.getResultBubbleTemplate(targetDate, resultList)
+    def queryResultListTemplate(resultList):
+        bubleTemplateContents = template.getResultBubbleTemplate( resultList)
         contents = {
             "type": "carousel",
             "contents" : []
@@ -216,9 +213,9 @@ class template:
         bubbleTemplate = bubleTemplateContents["contents"]
         contents["contents"] = bubbleTemplate
         return contents
-    def getResultBubbleTemplate(targetDate, resultList):
+    def getResultBubbleTemplate(resultList):
         contents = {"contents":[]}
-        for item in resultList["resultList"]:
+        for item in resultList:
             contents["contents"].append( 
                 {
                     "type": "bubble",
@@ -235,7 +232,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": targetDate,
+                            "text": str(item.drawing_date),
                             "weight": "bold",
                             "size": "xxl",
                             "margin": "md"
@@ -259,11 +256,11 @@ class template:
                                     "size": "sm",
                                     "color": "#555555",
                                     "flex": 0,
-                                    "text": str(item["date"])
+                                    "text": "你的號碼："
                                 },
                                 {
                                     "type": "text",
-                                    "text": Util.formatNumberList(item["keyinNum"]),
+                                    "text": Util.formatNumberList(item.pick_numbers),
                                     "size": "sm",
                                     "color": "#111111",
                                     "align": "end"
@@ -283,7 +280,7 @@ class template:
                                 },
                                 {
                                     "type": "text",
-                                    "text": Util.formatNumberList(item["goldNumber"]),
+                                    "text": Util.formatNumberList(item.winning_numbers),
                                     "size": "sm",
                                     "color": "#111111",
                                     "align": "end"
@@ -303,7 +300,7 @@ class template:
                                 },
                                 {
                                     "type": "text",
-                                    "text": item["goldNumberS"],
+                                    "text": str(item.special_number),
                                     "size": "sm",
                                     "color": "#111111",
                                     "align": "end"
@@ -323,7 +320,7 @@ class template:
                                 },
                                 {
                                     "type": "text",
-                                    "text": item["result"],
+                                    "text": item.result,
                                     "size": "sm",
                                     "color": "#111111",
                                     "align": "end"

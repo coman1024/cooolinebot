@@ -9,14 +9,18 @@ def getfixedNm():
     mydbconn.execute(sql_select_query,())
     record = mydbconn.fetchone()
 
-  return str(record[0])
+  return toIntList(record[0].split(',', -1))
 
 def getKeyinNm(date):
   with CursorFromConnectionFromPool() as mydbconn:
-    sql_select_query =  "select date, num from lottery.\"NumTbl\" WHERE type = 1 and date like %s order by date desc limit 20"
+    sql_select_query =  "select date, num from lottery.\"NumTbl\" WHERE type = 1 and date like %s order by date limit 20"
     mydbconn.execute(sql_select_query,(f'{date}%', ))
     record = mydbconn.fetchall()
 
   return record  
 
+def toIntList(strList):
+
+  return [int(i) for i in strList]
+ 
   
