@@ -46,7 +46,7 @@ class LotteryTicket:
 def lottery649_checker(lotto: Lottery649, ticket: LotteryTicket):
     winning_count = len(set(lotto.winning_numbers).intersection(set(ticket.pick_numbers)))
     win_special_number = lotto.special_number in ticket.pick_numbers
-
+    
     winning_tuple = (winning_count, win_special_number)
     prize = lotto.prizes[winning_tuple] if winning_tuple in lotto.prizes else None
     return prize
@@ -85,7 +85,7 @@ def scrape_lottery649(index):
         accumalted_list.extend(labels[13:])
 
     return Lottery649(
-                winning_numbers = [int(tag.string) for tag in soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_SNo[0-7]_{index}"))],
+                winning_numbers = [int(tag.string) for tag in soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_No[1-6]_{index}"))],
                 special_number = int(soup.find(id=f"Lotto649Control_history_dlQuery_No7_{index}").string),
                 item = LotteryItem.Lottery649,
                 period = soup.find(id=f"Lotto649Control_history_dlQuery_L649_DrawTerm_{index}").string,

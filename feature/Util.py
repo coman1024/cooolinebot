@@ -1,5 +1,9 @@
 def formatNumberList(numbers):
-  if len(numbers) == 6 :
+  try:
     return f'{numbers[0]}, {numbers[1]}, {numbers[2]}, {numbers[3]}, {numbers[4]}, {numbers[5]}'
-  else:
-    return " "  
+  except Exception as e:
+    return str(e)
+
+
+def toIntList(strList):
+  return [int(i) for i in strList]
