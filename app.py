@@ -42,7 +42,8 @@ from menu import (
     featureMenu,
     queryMenu,
     rewMenu,
-    saveMenu
+    saveMenu,
+    notifyMenu
 )
 from menu.featureMenu import(
     menu1,
@@ -67,8 +68,9 @@ from menu.saveMenu import(
     save4
 )
 
+from clock import Scheduler
 
-
+from apscheduler.schedulers.background import BackgroundScheduler
 app = Flask(__name__)
 print("sio start app !!")
 # get channel_secret and channel_access_token from your environment variable
@@ -86,7 +88,23 @@ parser = WebhookParser(channel_secret)
 
 defaultText = "查無指令"
 
+scheduler = BackgroundScheduler()
 
+@scheduler.scheduled_job('cron', day_of_week='tue,fri', hour='22', minute='10', timezone='Asia/Taipei')
+def lottery649_drawing_job():
+    subscriber_ids = notifyMenu.getIdAll()
+    if (len(subscriber_ids) == 0):
+        print("沒有通知")
+        return "OK"
+
+    for id in subscriber_ids:
+        line_bot_api.push_message(id[0],  FlexSendMessage(
+            alt_text = "最新中獎號碼",
+            contents = reward1.reward()
+    ))    
+        
+scheduler.add_job(func=Scheduler.wake_me_up_job, trigger="interval",  minutes=20)
+scheduler.start()
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -95,7 +113,6 @@ def callback():
     # get request body as text
     body = request.get_data(as_text=True)
     app.logger.debug("Request body1: " + body)
-
     # parse webhook body
     try:
         events = parser.parse(body, signature)
@@ -115,7 +132,20 @@ def callback():
                 returnText = ""
                 if (messageText == "menu"):      
                     line_bot_api.reply_message(event.reply_token, featureMenu.menu)
-                
+                elif (messageText == "設定提醒"):
+                    id = ""
+                    if (event.source.type == "group"):
+                        id =  event.source.group_id
+                    else:
+                        id =  event.source.user_id
+                    returnText = notifyMenu.insertId(id) 
+                elif (messageText == "取消提醒"):    
+                    id = ""
+                    if (event.source.type == "group"):
+                        id =  event.source.group_id
+                    else:
+                        id =  event.source.user_id
+                    returnText = notifyMenu.deleteId(id) 
                 elif (messageText.startswith("query")):
                     messageText = messageText[len("query"):]
                     
@@ -178,10 +208,14 @@ def callback():
                 if (returnText != ""):            
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
                              
-    except Exception as e:
+    except RuntimeError as e:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(e)))                   
 
     return 'OK'
+@app.route("/", methods=['GET'])
+def wake_up():
+    return 'OK'
+
 
 if __name__ == "__main__":
     
