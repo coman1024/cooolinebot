@@ -14,7 +14,7 @@ from feature.lottery import (
 )
 
 from feature.RewardNumber import rewardBot
-from feature import DBNumber
+from feature.DBNumber import NumberTbl
 from feature import Util
 
 from typing import Dict, List, Tuple
@@ -24,7 +24,7 @@ class reward1:
     text = "reward1"
     def reward():
         lottery649 = lottery.scrape_lottery649_lastest()
-        fixedNumbers = DBNumber.getfixedNm()
+        fixedNumbers = NumberTbl.getfixedNm()
         
         ticket = LotteryTicket(LotteryItem.Lottery649, "", lottery649.drawing_date, 50, fixedNumbers)
         lotteryPrize = lottery.lottery649_checker(lottery649, ticket)
@@ -41,7 +41,7 @@ class reward2:
         if(len(targetDate) == 0):
             raise RuntimeError("請輸入 reward2 日期")
         resultList = []
-        keyinNumberList = DBNumber.getKeyinNm(targetDate)
+        keyinNumberList = NumberTbl.getKeyinNm(targetDate)
         if(len(keyinNumberList) == 0):
             raise RuntimeError("無此日期")
 
