@@ -6,35 +6,46 @@ from linebot.models import (
 
 from feature.DBNumber import NumberTbl
 
-class save1():
-    label = "儲存自選號碼"
-    text = "save1"
-    def save(targetNum):
-        if (len(targetNum) == 0):
-            return "請輸入 save1 號碼(ex:01,02,03)"
-        else: 
-            return "還沒寫啦"
+from feature import Util
+
 
 class save2():
-    label = "自選號碼查詢"
+    label = "查詢自選號碼"
     text =  "save2"
     def save():
-        return NumberTbl.getfixedNm()
+        return Util.formatNumberList(NumberTbl.getfixedNm())
 
 class save3():
     label = "儲存電選號碼"
     text = "save3"
-    def save(targetNum):
-        if (len(targetNum) == 0):
+    def save(cmdStr):
+        if (len(cmdStr) == 0):
             return "請輸入 save3 號碼 日期(ex:01,02,03... 109/11/11)"
         else: 
-            return "還沒寫啦"
+            cmd = cmdStr.split(" ",-1)
+            numbers = cmd[0]
+            drawDate = cmd[1]
+            date = Util.getADyear(drawDate)
+            if not NumberTbl.findNm("1", drawDate):
+                NumberTbl.insertNm("1", drawDate, numbers, date)
+                return f"儲存成功 {cmdStr}" 
+            else:    
+                NumberTbl.updateNm("1", drawDate, numbers)
+                return f"更新成功 {cmdStr}" 
 
 class save4():
-    label = "陰陽人爛屁股"
-    text = "你罵我陰陽人爛屁股"
-    def save():
-        return "誰答腔我就罵誰"
+    label = "查詢電選號碼"
+    text = "save4"
+    def save(drawDat):
+        if (len(drawDat) == 0):
+            return "請輸入 save4 日期(YYY/MM/DD)"
+        else: 
+            numbers = NumberTbl.findNm("1", drawDat)
+            if numbers:
+                return numbers[0]
+            else:
+                return "找不到"    
+                        
 
 menu = TemplateSendMessage(
     alt_text = '查詢號碼功能選單',
@@ -42,10 +53,7 @@ menu = TemplateSendMessage(
         title = '你想要查詢什麼勒',
         text = '請選擇功能',
         actions = [
-            MessageTemplateAction(
-                label = save1.label,
-                text = save1.text
-            ),
+           
             MessageTemplateAction(
                 label = save2.label,
                 text = save2.text

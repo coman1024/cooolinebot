@@ -5,7 +5,6 @@ from linebot.models import (
     MessageTemplateAction
 )
 
-from feature.LotteryNumber import lotteryBot
 from feature import lottery
 from feature.lottery import (
     LotteryItem,
@@ -13,7 +12,6 @@ from feature.lottery import (
     LotteryTicket
 )
 
-from feature.RewardNumber import rewardBot
 from feature.DBNumber import NumberTbl
 from feature import Util
 
