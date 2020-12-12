@@ -62,7 +62,6 @@ from menu.rewMenu import(
 )
 
 from menu.saveMenu import(
-    save1,
     save2,
     save3,
     save4
@@ -101,7 +100,7 @@ def lottery649_drawing_job():
         line_bot_api.push_message(id[0],  FlexSendMessage(
             alt_text = "最新中獎號碼",
             contents = reward1.reward()
-    ))    
+        ))    
         
 scheduler.add_job(func=Scheduler.wake_me_up_job, trigger="interval",  minutes=20)
 scheduler.start()
@@ -148,7 +147,7 @@ def callback():
                     returnText = notifyMenu.deleteId(id) 
                 elif (messageText.startswith("query")):
                     messageText = messageText[len("query"):]
-                    
+                        
                     if (messageText.startswith("M")):
                         line_bot_api.reply_message(event.reply_token, queryMenu.menu)
                     elif (messageText.startswith("1")):
@@ -195,17 +194,15 @@ def callback():
 
                     if (messageText.startswith("M")):
                         line_bot_api.reply_message(event.reply_token, saveMenu.menu)
-                    elif (messageText.startswith("1")):
-                        returnText = save1.save(re.sub('[\s+]', '', messageText[1:]))
                     elif (messageText.startswith("2")):   
                         returnText = save2.save()
                     elif (messageText.startswith("3")):           
-                        returnText = save3.save(re.sub('[\s+]', '', messageText[1:]))
+                        returnText = save3.save(messageText[2:])
+                    elif (messageText.startswith("4")):           
+                        returnText = save4.save(re.sub('[\s+]', '', messageText[1:]))
                     
-                elif (messageText == "你罵我陰陽人爛屁股"):           
-                    returnText = save4.save()
 
-                if (returnText != ""):            
+                if (returnText != ""):
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
                              
     except RuntimeError as e:
