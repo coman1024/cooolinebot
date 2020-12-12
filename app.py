@@ -89,7 +89,7 @@ defaultText = "查無指令"
 
 scheduler = BackgroundScheduler()
 
-@scheduler.scheduled_job('cron', day_of_week='tue,fri,sat', hour='14', minute='23', timezone='Asia/Taipei')
+@scheduler.scheduled_job('cron', day_of_week='tue,fri', hour='22', minute='10', timezone='Asia/Taipei')
 def lottery649_drawing_job():
     subscriber_ids = notifyMenu.getIdAll()
     if (len(subscriber_ids) == 0):
@@ -100,7 +100,7 @@ def lottery649_drawing_job():
         line_bot_api.push_message(id[0],  FlexSendMessage(
             alt_text = "最新中獎號碼",
             contents = reward1.reward()
-    ))    
+        ))    
         
 scheduler.add_job(func=Scheduler.wake_me_up_job, trigger="interval",  minutes=20)
 scheduler.start()
@@ -147,7 +147,7 @@ def callback():
                     returnText = notifyMenu.deleteId(id) 
                 elif (messageText.startswith("query")):
                     messageText = messageText[len("query"):]
-                    
+                        
                     if (messageText.startswith("M")):
                         line_bot_api.reply_message(event.reply_token, queryMenu.menu)
                     elif (messageText.startswith("1")):
