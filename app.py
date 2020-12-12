@@ -62,7 +62,6 @@ from menu.rewMenu import(
 )
 
 from menu.saveMenu import(
-    save1,
     save2,
     save3,
     save4
@@ -90,7 +89,7 @@ defaultText = "查無指令"
 
 scheduler = BackgroundScheduler()
 
-@scheduler.scheduled_job('cron', day_of_week='tue,fri', hour='22', minute='10', timezone='Asia/Taipei')
+@scheduler.scheduled_job('cron', day_of_week='tue,fri,sat', hour='14', minute='23', timezone='Asia/Taipei')
 def lottery649_drawing_job():
     subscriber_ids = notifyMenu.getIdAll()
     if (len(subscriber_ids) == 0):
@@ -195,17 +194,15 @@ def callback():
 
                     if (messageText.startswith("M")):
                         line_bot_api.reply_message(event.reply_token, saveMenu.menu)
-                    elif (messageText.startswith("1")):
-                        returnText = save1.save(re.sub('[\s+]', '', messageText[1:]))
                     elif (messageText.startswith("2")):   
                         returnText = save2.save()
                     elif (messageText.startswith("3")):           
-                        returnText = save3.save(re.sub('[\s+]', '', messageText[1:]))
+                        returnText = save3.save(messageText[2:])
+                    elif (messageText.startswith("4")):           
+                        returnText = save4.save(re.sub('[\s+]', '', messageText[1:]))
                     
-                elif (messageText == "你罵我陰陽人爛屁股"):           
-                    returnText = save4.save()
 
-                if (returnText != ""):            
+                if (returnText != ""):
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
                              
     except RuntimeError as e:
