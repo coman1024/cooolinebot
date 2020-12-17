@@ -89,7 +89,7 @@ defaultText = "查無指令"
 
 scheduler = BackgroundScheduler()
 
-@scheduler.scheduled_job('cron', day_of_week='tue,fri,thu', hour='14', minute='39', timezone='Asia/Taipei')
+@scheduler.scheduled_job('cron', day_of_week='tue,fri', hour='22', minute='10', timezone='Asia/Taipei')
 def lottery649_drawing_job():
     subscriber_ids = notifyMenu.getIdAll()
     if (len(subscriber_ids) == 0):
