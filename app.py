@@ -97,11 +97,14 @@ def lottery649_drawing_job():
         return "OK"
 
     for id in subscriber_ids:
-        line_bot_api.push_message(id[0],  FlexSendMessage(
-            alt_text = "最新中獎號碼",
-            contents = reward1.reward()
-        ))    
-        
+        try:
+            line_bot_api.push_message(id[0],  FlexSendMessage(
+                alt_text = "最新中獎號碼",
+                contents = reward1.reward()
+            ))
+        except Exception:
+            continue        
+    
 scheduler.add_job(func=Scheduler.wake_me_up_job, trigger="interval",  minutes=20)
 scheduler.start()
 
