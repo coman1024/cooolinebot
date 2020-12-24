@@ -71,7 +71,6 @@ class ShiftTbl:
         return result  
 
     def insertLuckyMan(shfitDate ,luckyMan):
-        print(f"insertLuckyMan:{luckyMan}")
         with CursorFromConnectionFromPool() as mydbconn:
             sql =  "INSERT INTO lottery.\"ShiftTbl\" VALUES (%s, %s)"
             mydbconn.execute(sql,(shfitDate,luckyMan,))
