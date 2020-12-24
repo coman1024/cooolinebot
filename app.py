@@ -43,7 +43,8 @@ from menu import (
     queryMenu,
     rewMenu,
     saveMenu,
-    notifyMenu
+    notifyMenu,
+    shiftMenu
 )
 from menu.featureMenu import(
     menu1,
@@ -148,6 +149,11 @@ def callback():
                     else:
                         id =  event.source.user_id
                     returnText = notifyMenu.deleteId(id) 
+                elif (messageText == "誰去買樂透"):
+                    line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                        alt_text = "誰去買樂透",
+                        contents = shiftMenu.shift()
+                    ))
                 elif (messageText.startswith("query")):
                     messageText = messageText[len("query"):]
                         
@@ -186,7 +192,6 @@ def callback():
                             contents = reward2.reward(re.sub('[\s+]', '', messageText[1:]))
                         ))
                     elif (messageText.startswith("3")):    
-                        
                         line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
                             alt_text = "輸入號碼對獎結果",
                             contents = reward3.reward(re.sub('[\s+]', '', messageText[1:]))
