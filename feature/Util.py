@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, date
 
 def formatNumberList(numbers):
     try:
@@ -11,18 +11,29 @@ def toIntList(strList):
     return [int(i) for i in strList]
 
 def getADyear(drawDate):
-    print(f"{drawDate}:{len(drawDate)}")
     if (len(drawDate) == 9):
         date = toIntList(drawDate.split('/',-1))
-        print(date)
         if (len(date) == 3):
             try:
-                adYear = datetime.datetime(year=(date[0]+1911),month=date[1],day=date[2])
-                print(adYear)
+                adYear = datetime(year=(date[0]+1911),month=date[1],day=date[2])
                 return adYear
             except ValueError:
                 raise RuntimeError("日期錯誤")
     raise RuntimeError("日期錯誤")
-
-    
            
+def getShiftDate():
+    shiftDate = date.today()
+    return shiftDate.strftime("%Y%m")
+
+def getNextShiftDate():    
+    today = date.today()
+    nextShiftDate = ""
+    try:
+        nextShiftDate = datetime(year=today.year, month=today.month+1, day=1)
+    except ValueError:
+        if today.month == 12:
+            nextShiftDate = datetime(year=today.year+1, month=1, day=1)
+        else:
+            raise RuntimeError("日期錯誤")    
+
+    return nextShiftDate.strftime("%Y%m")
