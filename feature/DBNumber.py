@@ -62,6 +62,18 @@ class IdTbl:
             sql = "DELETE FROM lottery.\"IdTbl\"  WHERE \"notifyId\" = %s"
             mydbconn.execute(sql,(id,))
 
+class ShiftTbl:
+    def getLuckyMan(shfitDate):
+        with CursorFromConnectionFromPool() as mydbconn:
+            sql = "SELECT \"shiftDate\", \"luckyMan\" FROM lottery.\"ShiftTbl\" WHERE \"shiftDate\" = %s "
+            mydbconn.execute(sql,(shfitDate,))
+            result = mydbconn.fetchone()
+        return result  
 
+    def insertLuckyMan(shfitDate ,luckyMan):
+        print(f"insertLuckyMan:{luckyMan}")
+        with CursorFromConnectionFromPool() as mydbconn:
+            sql =  "INSERT INTO lottery.\"ShiftTbl\" VALUES (%s, %s)"
+            mydbconn.execute(sql,(shfitDate,luckyMan,))
  
   
