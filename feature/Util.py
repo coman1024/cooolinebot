@@ -37,3 +37,10 @@ def getNextShiftDate():
             raise RuntimeError("日期錯誤")    
 
     return nextShiftDate.strftime("%Y%m")
+
+def getCommond(cmd: str):
+    if(cmd.startswith(" ")):
+        cmd = cmd[1:]
+        return getCommond(cmd)
+    else:
+        return cmd    

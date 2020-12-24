@@ -62,11 +62,6 @@ from menu.rewMenu import(
     reward3
 )
 
-from menu.saveMenu import(
-    save2,
-    save3,
-    save4
-)
 
 from clock import Scheduler
 
@@ -154,6 +149,8 @@ def callback():
                         alt_text = "誰去買樂透",
                         contents = shiftMenu.shift()
                     ))
+                elif (messageText.startswith("儲存號碼")):
+                    returnText = saveMenu.save(messageText[len("儲存號碼"):])
                 elif (messageText.startswith("query")):
                     messageText = messageText[len("query"):]
                         
@@ -196,19 +193,6 @@ def callback():
                             alt_text = "輸入號碼對獎結果",
                             contents = reward3.reward(re.sub('[\s+]', '', messageText[1:]))
                         ))
-
-                elif (messageText.startswith("save")):
-                    messageText = messageText[len("save"):]
-
-                    if (messageText.startswith("M")):
-                        line_bot_api.reply_message(event.reply_token, saveMenu.menu)
-                    elif (messageText.startswith("2")):   
-                        returnText = save2.save()
-                    elif (messageText.startswith("3")):           
-                        returnText = save3.save(messageText[2:])
-                    elif (messageText.startswith("4")):           
-                        returnText = save4.save(re.sub('[\s+]', '', messageText[1:]))
-                    
 
                 if (returnText != ""):
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
