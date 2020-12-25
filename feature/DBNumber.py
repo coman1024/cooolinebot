@@ -11,26 +11,29 @@ class NumberTbl:
             record = mydbconn.fetchone()
         return Util.toIntList(record[0].split(',', -1))
 
-    def getKeyinNm(drawDate):
+    def findNm(type, drawDate, date):
         with CursorFromConnectionFromPool() as mydbconn:
-            sql =  "SELECT \"drawDate\", num FROM lottery.\"NumTbl\" WHERE type = 1 AND \"date\"  <= now() AND \"drawDate\" LIKE %s  ORDER BY \"drawDate\" DESC LIMIT 12"
-            mydbconn.execute(sql,(f'{drawDate}%', ))
+            condistions = []
+            sql =  "SELECT \"drawDate\", num, \"type\" FROM lottery.\"NumTbl\" WHERE \"date\" <= now() "
+
+            if type:
+                sql += " and \"type\"=%s "
+                condistions.append(type)
+            if drawDate:
+                sql += " and \"drawDate\"=%s "
+                condistions.append(drawDate)
+            if date:
+                sql += " and \"date\"=%s "
+                condistions.append(date)
+            sql += " ORDER BY \"date\" DESC, \"type\" LIMIT 12"
+            mydbconn.execute(sql,(condistions))
             record = mydbconn.fetchall()
-        return record  
-
-
-    def findNm(type, drawDate):
-        with CursorFromConnectionFromPool() as mydbconn:
-            sql =  "SELECT num FROM lottery.\"NumTbl\" WHERE type = %s AND \"drawDate\" = %s"
-            mydbconn.execute(sql,(type, drawDate, ))
-            record = mydbconn.fetchone()
-        return record  
+        return record
 
     def insertNm(type, drawDate, number, date):
         with CursorFromConnectionFromPool() as mydbconn:
             sql = "INSERT INTO lottery.\"NumTbl\"(type, \"drawDate\", num, date) VALUES (%s, %s, %s, %s)"
             mydbconn.execute(sql,(type, drawDate, number, date, ))
-        return 
 
     def updateNm(type, drawDate, number):
         with CursorFromConnectionFromPool() as mydbconn:
