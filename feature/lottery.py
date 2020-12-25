@@ -119,7 +119,7 @@ def scrape_lottery649_by_seq(seq):
 def scrape_lottery649_by_date(date):
     scrape = Scrape()
     drawing_date_list = [tag.string for tag in scrape.soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_L649_DDate_[0-9]"))]
-    print(drawing_date_list)
+    
     targetIdx = 99
     for idx, item  in enumerate(drawing_date_list):
         if date == item:
@@ -127,16 +127,6 @@ def scrape_lottery649_by_date(date):
             break
     if (targetIdx == 99):
       raise RuntimeError("找不到開獎日期")
-
-    print(targetIdx)
+    
     return scrape_lottery649(scrape, targetIdx)
 
-if __name__ == "__main__":
-    ticket = LotteryTicket(LotteryItem.Lottery649, "109/11/27", "109/11/27", 50, [1, 2, 3, 4, 5, 6])
-    print("You buy a ticket", ticket.__dict__)
-
-    last_lotto = scrape_lottery649_lastest()
-    print("\nLast Lottery649 is", last_lotto.__dict__)
-
-    last_lotto = scrape_lottery649_by_date("109/11/27")
-    print("\nLast Lottery649 is", last_lotto.__dict__)

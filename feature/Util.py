@@ -1,14 +1,20 @@
 from datetime import datetime, date
+import re
 
 def formatNumberList(numbers):
+    if len(re.sub('[\s+]', '', str(numbers))) == 0:
+        return " "
     try:
         return f'{numbers[0]}, {numbers[1]}, {numbers[2]}, {numbers[3]}, {numbers[4]}, {numbers[5]}'
     except Exception as e:
-        return str(e)
+        return f"{e}"
 
 
 def toIntList(strList):
     return [int(i) for i in strList]
+
+def getToday():
+    return date.today()    
 
 def getADyear(drawDate):
     if (len(drawDate) == 9):
