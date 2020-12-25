@@ -13,7 +13,7 @@ def save(cmdStr):
         numbers = cmd[0]
         drawDate = cmd[1]
         date = Util.getADyear(drawDate)
-        if not NumberTbl.findNm("1", drawDate):
+        if not NumberTbl.findNm("1", drawDate, None):
             fixedNumbers = NumberTbl.getfixedNm()
             NumberTbl.insertNm("1", drawDate, numbers, date)
             NumberTbl.insertNm("0", drawDate,  Util.formatNumberList(fixedNumbers), date)
