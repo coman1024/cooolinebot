@@ -14,17 +14,21 @@ class NumberTbl:
     def findNm(type, drawDate, date):
         with CursorFromConnectionFromPool() as mydbconn:
             condistions = []
-            sql =  "SELECT \"drawDate\", num, \"type\" FROM lottery.\"NumTbl\" WHERE \"date\" <= now() "
-
+            sql =  "SELECT \"drawDate\", num, \"type\" FROM lottery.\"NumTbl\" WHERE 1=1 "
+            condistionSQL = ""
             if type:
-                sql += " and \"type\"=%s "
+                condistionSQL += " and \"type\"=%s "
                 condistions.append(type)
             if drawDate:
-                sql += " and \"drawDate\"=%s "
+                condistionSQL += " and \"drawDate\"=%s "
                 condistions.append(drawDate)
             if date:
-                sql += " and \"date\"=%s "
+                condistionSQL += " and \"date\"=%s "
                 condistions.append(date)
+
+            if len(condistionSQL) == 0:
+                condistionSQL += " and \"date\" <= now() "
+            sql += condistionSQL  
             sql += " ORDER BY \"date\" DESC, \"type\" LIMIT 12"
             mydbconn.execute(sql,(condistions))
             record = mydbconn.fetchall()
