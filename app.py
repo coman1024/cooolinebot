@@ -145,7 +145,7 @@ def callback():
                         contents = shiftMenu.shift()
                     ))
                 elif (messageText.startswith("儲存號碼")):
-                    returnText = saveMenu.save()
+                    returnText = saveMenu.save(messageText[len("儲存號碼"):])
                 elif (messageText.startswith("對獎")):
                     line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
                         alt_text = "快來看看中獎了沒",
