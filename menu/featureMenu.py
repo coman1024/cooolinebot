@@ -9,11 +9,6 @@ class menu1:
     label = "查詢中獎號碼"
     text = "queryM"
 
-
-class menu2:
-    label = "對獎"
-    text =  "rewardM"
-
 class menu3:
     label = "儲存號碼"
     text = "saveM"
@@ -27,10 +22,6 @@ menu = TemplateSendMessage(
             MessageTemplateAction(
                 label = menu1.label,
                 text = menu1.text
-            ),
-            MessageTemplateAction(
-                label = menu2.label,
-                text = menu2.text
             ),
             MessageTemplateAction(
                 label = menu3.label,
