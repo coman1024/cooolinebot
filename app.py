@@ -56,6 +56,7 @@ from menu.queryMenu import(
     query3
 )
 
+from lottery.lottery_bot import LotteryBot
 
 from clock import Scheduler
 
@@ -77,6 +78,7 @@ parser = WebhookParser(channel_secret)
 
 defaultText = "查無指令"
 
+lottery_bot = LotteryBot()
 scheduler = BackgroundScheduler()
 
 @scheduler.scheduled_job('cron', day_of_week='tue,fri', hour='22', minute='10', timezone='Asia/Taipei')
@@ -124,7 +126,12 @@ def callback():
                 messageText = event.message.text
                 returnText = ""
                 if (messageText == "menu"):      
-                    line_bot_api.reply_message(event.reply_token, featureMenu.menu)
+                elif messageText == 'testhint':
+                    line_bot_api.reply_message(
+                        event.reply_token, lottery_bot.get_reply_instance('Help').get_reply_message('All'))
+                elif messageText == 'testlottery':
+                    line_bot_api.reply_message(
+                        event.reply_token, lottery_bot.get_reply_instance('Lottery').get_reply_message('get_last_one'))
                 elif (messageText == "設定提醒"):
                     id = ""
                     if (event.source.type == "group"):
