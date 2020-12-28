@@ -3,7 +3,8 @@ from feature import lottery
 from feature.lottery import (
     LotteryItem,
     Lottery649,
-    LotteryTicket
+    LotteryTicket,
+    Scrape
 )
 
 from feature.DBNumber import NumberTbl
@@ -31,13 +32,14 @@ def targetReward(targetDate):
     
 def reward(pickNumbers_List: list):
     resultList = []
+    scrape = Scrape()
     for obj in pickNumbers_List:
         drawing_date = obj[0]
         pick_numbers = obj[1].split(',', -1)
         type = obj[2]
         ticket = LotteryTicket(LotteryItem.Lottery649, "", drawing_date, 50, pick_numbers)
         try:
-            lottery649 = lottery.scrape_lottery649_by_date(drawing_date)
+            lottery649 = lottery.scrape_lottery649_by_date(scrape, drawing_date)
             lotteryPrize = lottery.lottery649_checker(lottery649, ticket)
             result = "槓龜"
             if (lotteryPrize != None):
