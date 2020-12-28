@@ -99,13 +99,11 @@ def scrape_lottery649(scrape: Scrape, index):
             )
 
 
-def scrape_lottery649_lastest():
-    scrape = Scrape()
+def scrape_lottery649_lastest(scrape:Scrape):
     return scrape_lottery649(scrape, 0)
 
 
-def scrape_lottery649_by_seq(seq):
-    scrape = Scrape()
+def scrape_lottery649_by_seq(scrape:Scrape, seq):
     drawing_seq_list = [tag.string for tag in scrape.soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_L649_DrawTerm_[0-9]"))]
     targetIdx = 99
     for idx, item  in enumerate(drawing_seq_list):
@@ -116,8 +114,7 @@ def scrape_lottery649_by_seq(seq):
       raise RuntimeError("找不到開獎期數")
     return scrape_lottery649(scrape, targetIdx)
 
-def scrape_lottery649_by_date(date):
-    scrape = Scrape()
+def scrape_lottery649_by_date(scrape:Scrape, date):
     drawing_date_list = [tag.string for tag in scrape.soup.find_all(id=re.compile(f"Lotto649Control_history_dlQuery_L649_DDate_[0-9]"))]
     
     targetIdx = 99

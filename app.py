@@ -40,7 +40,6 @@ from linebot.models import (
 
 from menu import (
     featureMenu,
-    queryMenu,
     rewMenu,
     saveMenu,
     notifyMenu,
@@ -49,11 +48,6 @@ from menu import (
 from menu.featureMenu import(
     menu1,
     menu3
-)
-from menu.queryMenu import(
-    query1,
-    query2,
-    query3
 )
 
 
@@ -151,27 +145,6 @@ def callback():
                         alt_text = "快來看看中獎了沒",
                         contents = rewMenu.targetReward(messageText[len("對獎"):])
                     ))  
-                elif (messageText.startswith("query")):
-                    messageText = messageText[len("query"):]
-                        
-                    if (messageText.startswith("M")):
-                        line_bot_api.reply_message(event.reply_token, queryMenu.menu)
-                    elif (messageText.startswith("1")):
-                        line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
-                            alt_text = "最新中獎號碼",
-                            contents = query1.find()
-                        ))
-                    elif (messageText.startswith("2")):
-                        line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
-                            alt_text = "日期查詢中獎號碼",
-                            contents = query2.find(re.sub('[\s+]', '', messageText[1:]))
-                        ))
-                    elif (messageText.startswith("3")):   
-                        line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
-                            alt_text = "期數查詢中獎號碼",
-                            contents = query3.find(re.sub('[\s+]', '', messageText[1:]))
-                        ))
-
                 if (returnText != ""):
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
                              
