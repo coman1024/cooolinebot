@@ -4,9 +4,6 @@ from linebot.models import FlexSendMessage
 
 
 class LotteryReply:
-    def __init__(self, lottery_checker):
-        self.checker = lottery_checker
-
     def _get_tickets(self):
         pass
 
@@ -20,7 +17,7 @@ class LotteryReply:
             if tickets:
                 message.contents = {
                     'type': 'carousel',
-                    'contents': [LotteryMessage(last_lottery, self.checker.check(
+                    'contents': [LotteryMessage(last_lottery, LotteryChecker().check(
                         last_lottery, ticket), ticket).get_message() for ticket in tickets]
                 }
             else:
