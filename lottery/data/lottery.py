@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import re
 from typing import Dict, List, Tuple
 import itertools
 
@@ -51,85 +50,80 @@ class Lottery:
 class LotteryScraper():
     def __init__(self):
         self._url = "https://www.taiwanlottery.com.tw/lotto/lotto649/history.aspx"
-        self._response = requests.get(self._url)
-        self._soup = BeautifulSoup(self._response.text, "html.parser")
 
-    def _scrape_by_index(self, index):
-        categs = [tag.string for tag in self._soup.find_all(id=re.compile(
-            f"Lotto649Control_history_dlQuery_L649_Categ[ABC][345]_{index}"))]
-        labels = [tag.string for tag in self._soup.find_all(
-            id=re.compile(f"Lotto649Control_history_dlQuery_Label[0-9]+_{index}"))]
+    def _atoi(self, str_with_comma):
+        return int(str_with_comma.replace(',', ''))
 
-        winners = []
-        prize_money_list = []
-        accumalted_list = []
-        if index % 2 == 0:
-            winners.extend(categs[0:3])
-            winners.extend(labels[0:5])
+    def _check_lottery(self, lottery):
+        return True
 
-            prize_money_list.extend(categs[3])
-            prize_money_list.extend(labels[5:12])
+    def _parse_lottery(self, table_tag):
+        rows = table_tag.find_all('tr')
 
-            # accumalted_list.extend(categs[4])
-            # accumalted_list.extend(labels[12:])
-        else:
-            winners.extend(categs[0])
-            winners.extend(labels[0:6])
+        cols = rows[1].find_all('span')
+        period = cols[0].string
+        drawing_date = cols[2].string
+        due_date = cols[3].string
+        sales_money = self._atoi(cols[4].string)
+        total_prize = self._atoi(cols[5].string)
 
-            prize_money_list.extend(categs[1])
-            prize_money_list.extend(labels[5:13])
+        cols = rows[4].find_all('span')
+        winning_numbers = [int(num.string) for num in cols[0:6]]
+        special_number = int(cols[7].string)
 
-            # accumalted_list.extend(categs[2])
-            # accumalted_list.extend(labels[13:])
+        winner_list = [self._atoi(winner.string)
+                       for winner in rows[8].find_all('span')[1:]]
+        prize_money_list = [self._atoi(prize.string)
+                            for prize in rows[9].find_all('span')[1:]]
+        next_prize_money_list = [self._atoi(n.string)
+                                 for n in rows[10].find_all('span')[1:]]
+        zip_list = itertools.zip_longest(
+            [(6, 0), (5, 1), (5, 0), (4, 1), (4, 0), (3, 1), (2, 1), (3, 0)],
+            winner_list,
+            prize_money_list,
+            next_prize_money_list,
+            fillvalue=None)
+        prizes = {k: LotteryPrize(k, w, p, n) for (k, w, p, n) in zip_list}
 
-        return Lottery(
-            period=self._soup.find(
-                id=f"Lotto649Control_history_dlQuery_L649_DrawTerm_{index}").string,
-            drawing_date=self._soup.find(
-                id=f"Lotto649Control_history_dlQuery_L649_DDate_{index}").string,
-            due_date=self._soup.find(
-                id=f"Lotto649Control_history_dlQuery_L649_EDate_{index}").string,
-            sales_money=self._soup.find(
-                id=f"Lotto649Control_history_dlQuery_L649_SellAmount_{index}").string,
-            total_prize=self._soup.find(
-                id=f"Lotto649Control_history_dlQuery_Total_{index}").string,
-            prizes={k: LotteryPrize(k, w, p, n) for (k, w, p, n) in itertools.zip_longest(
-                [(6, 0), (5, 1), (5, 0), (4, 1), (4, 0), (3, 1), (2, 1), (3, 0)], winners, prize_money_list, accumalted_list, fillvalue=None)},
-            winning_numbers=[int(tag.string) for tag in self._soup.find_all(
-                id=re.compile(f"Lotto649Control_history_dlQuery_No[1-6]_{index}"))],
-            special_number=int(self._soup.find(
-                id=f"Lotto649Control_history_dlQuery_No7_{index}").string),
-        )
+        lottery = Lottery(period=period,
+                          drawing_date=drawing_date,
+                          due_date=due_date,
+                          sales_money=sales_money,
+                          total_prize=total_prize,
+                          prizes=prizes,
+                          winning_numbers=winning_numbers,
+                          special_number=special_number)
+        return lottery if self._check_lottery(lottery) else None
 
-    def scrape_last_one(self):
-        return self._scrape_by_index(0)
+    def scrape_latest(self) -> Lottery:
+        response = requests.get(self._url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        table_tag = soup.find(
+            'table', id='Lotto649Control_history_dlQuery').find('table')
+        lottery = self._parse_lottery(table_tag)
+        return lottery
 
-    def scrape_by_date(self, date):
-        drawing_date_list = [tag.string for tag in self._soup.find_all(
-            id=re.compile(f"Lotto649Control_history_dlQuery_L649_DDate_[0-9]"))]
+    def scrape_by_month(self, year, month) -> List[Lottery]:
+        # ASP.NET驗證資訊
+        response = requests.get(self._url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        view_state = soup.find(id='__VIEWSTATE').get('value')
+        event_validation = soup.find(id='__EVENTVALIDATION').get('value')
+        data = {
+            '__VIEWSTATE': view_state,
+            '__EVENTVALIDATION': event_validation,
+            'Lotto649Control_history$dropYear': year,
+            'Lotto649Control_history$dropMonth': month,
+            'Lotto649Control_history$btnSubmit': '查詢'
+        }
 
-        targetIdx = 99
-        for idx, item in enumerate(drawing_date_list):
-            if date == item:
-                targetIdx = idx
-                break
-        if (targetIdx == 99):
-            raise RuntimeError("找不到開獎日期")
-
-        return self._scrape_by_index(targetIdx)
-
-    def scrape_by_seq(self, seq):
-        drawing_seq_list = [tag.string for tag in self._soup.find_all(
-            id=re.compile(f"Lotto649Control_history_dlQuery_L649_DrawTerm_[0-9]"))]
-        targetIdx = 99
-        for idx, item in enumerate(drawing_seq_list):
-            if seq == item:
-                targetIdx = idx
-                break
-        if (targetIdx == 99):
-            raise RuntimeError("找不到開獎期數")
-
-        return self._scrape_by_index(targetIdx)
+        response = requests.post(self._url, data=data)
+        soup = BeautifulSoup(response.text, "html.parser")
+        table_tags = soup.find(
+            'table', id='Lotto649Control_history_dlQuery').find_all('table')
+        lottery_list = [lottery for lottery in (self._parse_lottery(
+            tag) for tag in table_tags) if lottery is not None]
+        return lottery_list
 
 
 class LotteryChecker:
@@ -156,7 +150,7 @@ class LotteryChecker:
 if __name__ == "__main__":
     # lottery scraper
     scraper = LotteryScraper()
-    last_lottery = scraper.scrape_last_one()
+    latest_lottery = scraper.scrape_latest()
 
     # buy a ticket
     my_ticket = LotteryTicket(
@@ -164,9 +158,17 @@ if __name__ == "__main__":
 
     # get prize
     checker = LotteryChecker()
-    prize = checker.check(last_lottery, my_ticket)
+    prize = checker.check(latest_lottery, my_ticket)
 
+    print('Latest Date:', latest_lottery.drawing_date)
     if prize:
         print('Prize:', prize.title, prize.prize_money, '元')
     else:
         print('GG!')
+
+    # lottery of one month
+    month_lottery = scraper.scrape_by_month(110, 1)
+    for lottery in month_lottery:
+        print('Date:', lottery.drawing_date)
+        print('Winning numbers:', lottery.winning_numbers,
+              'special:', lottery.special_number)

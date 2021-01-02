@@ -5,7 +5,7 @@ from lottery.data.lottery import Lottery, LotteryChecker, LotteryPrize, LotteryT
 class LotteryCheckerTest(unittest.TestCase):
 
     def setUp(self):
-        self.lotto = Lottery(
+        self.lottery = Lottery(
             period='109000111',
             drawing_date='109/12/25',
             due_date='110/03/29',
@@ -33,66 +33,77 @@ class LotteryCheckerTest(unittest.TestCase):
         )
 
     def tearDown(self):
-        self.lotto = None
+        self.lottery = None
 
     def test_lottery_checker(self):
         self.ticket.pick_numbers = [1, 2, 3, 4, 5, 6]
         self.assertEqual(LotteryChecker().check(
-            self.lotto, self.ticket), self.lotto.prizes[(6, 0)])
+            self.lottery, self.ticket), self.lottery.prizes[(6, 0)])
 
         self.ticket.pick_numbers = [1, 2, 3, 4, 5, 7]
         self.assertEqual(LotteryChecker().check(
-            self.lotto, self.ticket), self.lotto.prizes[(5, 1)])
+            self.lottery, self.ticket), self.lottery.prizes[(5, 1)])
 
         self.ticket.pick_numbers = [1, 2, 3, 4, 5, 11]
         self.assertEqual(LotteryChecker().check(
-            self.lotto, self.ticket), self.lotto.prizes[(5, 0)])
+            self.lottery, self.ticket), self.lottery.prizes[(5, 0)])
 
         self.ticket.pick_numbers = [1, 2, 3, 4, 7, 11]
         self.assertEqual(LotteryChecker().check(
-            self.lotto, self.ticket), self.lotto.prizes[(4, 1)])
+            self.lottery, self.ticket), self.lottery.prizes[(4, 1)])
 
         self.ticket.pick_numbers = [1, 2, 3, 4, 12, 11]
         self.assertEqual(LotteryChecker().check(
-            self.lotto, self.ticket), self.lotto.prizes[(4, 0)])
+            self.lottery, self.ticket), self.lottery.prizes[(4, 0)])
 
         self.ticket.pick_numbers = [1, 2, 3, 7, 12, 11]
         self.assertEqual(LotteryChecker().check(
-            self.lotto, self.ticket), self.lotto.prizes[(3, 1)])
+            self.lottery, self.ticket), self.lottery.prizes[(3, 1)])
 
         self.ticket.pick_numbers = [1, 2, 7, 13, 12, 11]
         self.assertEqual(LotteryChecker().check(
-            self.lotto, self.ticket), self.lotto.prizes[(2, 1)])
+            self.lottery, self.ticket), self.lottery.prizes[(2, 1)])
 
         self.ticket.pick_numbers = [1, 2, 3, 13, 12, 11]
         self.assertEqual(LotteryChecker().check(
-            self.lotto, self.ticket), self.lotto.prizes[(3, 0)])
+            self.lottery, self.ticket), self.lottery.prizes[(3, 0)])
 
         # (2, 0)
         self.ticket.pick_numbers = [1, 2, 14, 13, 12, 11]
-        self.assertIsNone(LotteryChecker().check(self.lotto, self.ticket))
+        self.assertIsNone(LotteryChecker().check(self.lottery, self.ticket))
 
         # (1, 1)
         self.ticket.pick_numbers = [1, 7, 14, 13, 12, 11]
-        self.assertIsNone(LotteryChecker().check(self.lotto, self.ticket))
+        self.assertIsNone(LotteryChecker().check(self.lottery, self.ticket))
 
         # (1, 0)
         self.ticket.pick_numbers = [1, 15, 14, 13, 12, 11]
-        self.assertIsNone(LotteryChecker().check(self.lotto, self.ticket))
+        self.assertIsNone(LotteryChecker().check(self.lottery, self.ticket))
 
         # (0, 1)
         self.ticket.pick_numbers = [7, 15, 14, 13, 12, 11]
-        self.assertIsNone(LotteryChecker().check(self.lotto, self.ticket))
+        self.assertIsNone(LotteryChecker().check(self.lottery, self.ticket))
 
         # (0, 0)
         self.ticket.pick_numbers = [16, 15, 14, 13, 12, 11]
-        self.assertIsNone(LotteryChecker().check(self.lotto, self.ticket))
+        self.assertIsNone(LotteryChecker().check(self.lottery, self.ticket))
 
 
 class LotteryScraperTest(unittest.TestCase):
-    def test_scrape_last(self):
+    def test_scrape_latest(self):
         scraper = LotteryScraper()
-        lotto = scraper.scrape_last_one()
-        self.assertIsInstance(lotto, Lottery)
-        self.assertIsInstance(lotto.prizes, dict)
-        self.assertEqual(len(lotto.prizes), 8, 'Lottery prize should be 8')
+        lottery = scraper.scrape_latest()
+        self.assertIsInstance(lottery, Lottery)
+        self.assertIsInstance(lottery.prizes, dict)
+        self.assertEqual(len(lottery.prizes), 8, 'Lottery prize should be 8')
+
+    def test_scrape_month(self):
+        scraper = LotteryScraper()
+        lottery_list = scraper.scrape_by_month(109, 10)
+        self.assertLessEqual(len(lottery_list), 9)
+        self.assertGreaterEqual(len(lottery_list), 8)
+        for lottery in lottery_list:
+            self.assertIsInstance(lottery, Lottery)
+            self.assertIsInstance(lottery.prizes, dict)
+            self.assertEqual(len(lottery.prizes), 8,
+                             'Lottery prize should be 8')
