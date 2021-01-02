@@ -131,7 +131,10 @@ def callback():
                         event.reply_token, lottery_bot.get_reply_instance('Help').get_reply_message('All'))
                 elif messageText == 'testlottery':
                     line_bot_api.reply_message(
-                        event.reply_token, lottery_bot.get_reply_instance('Lottery').get_reply_message('get_last_one'))
+                        event.reply_token, lottery_bot.get_reply_instance('Lottery').get_reply_message('get_latest'))
+                elif messageText == 'testmonth':
+                    line_bot_api.reply_message(
+                        event.reply_token, lottery_bot.get_reply_instance('Lottery').get_reply_message_for_month(109, 8))
                 elif (messageText == "設定提醒"):
                     id = ""
                     if (event.source.type == "group"):
