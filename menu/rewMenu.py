@@ -35,7 +35,7 @@ def reward(pickNumbers_List: list):
     scrape = Scrape()
     for obj in pickNumbers_List:
         drawing_date = obj[0]
-        pick_numbers = obj[1].split(',', -1)
+        pick_numbers = Util.toIntList(obj[1].split(',', -1))
         type = obj[2]
         ticket = LotteryTicket(LotteryItem.Lottery649, "", drawing_date, 50, pick_numbers)
         try:
