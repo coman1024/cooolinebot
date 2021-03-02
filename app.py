@@ -89,7 +89,26 @@ def lottery649_drawing_job():
             ))
         except Exception:
             continue        
-    
+
+@scheduler.scheduled_job('cron', day='20', hour='10', minute='30', timezone='Asia/Taipei')
+def pickLotteryNumber_job():
+    print("誰去買樂透")
+    subscriber_ids = notifyMenu.getIdAll()
+    if (len(subscriber_ids) == 0):
+        print("沒有通知")
+        return "OK"
+
+    for id in subscriber_ids:
+        try:
+            line_bot_api.push_message(id[0],  FlexSendMessage(
+                    alt_text = "誰去買樂透",
+                    contents = shiftMenu.shift()
+                ))
+        except Exception as e:
+            print(str(e))
+            continue         
+
+
 scheduler.add_job(func=Scheduler.wake_me_up_job, trigger="interval",  minutes=20)
 scheduler.start()
 
