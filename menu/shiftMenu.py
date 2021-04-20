@@ -34,7 +34,7 @@ def getLuckyMan(shiftDate):
         else:                
             luckyMan = ShiftScheduler.randomShift()
 
-        # ShiftTbl.insertLuckyMan(shiftDate, luckyMan)
+        ShiftTbl.insertLuckyMan(shiftDate, luckyMan)
     return luckyMan  
 
 class template: 
