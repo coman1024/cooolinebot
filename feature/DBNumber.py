@@ -77,6 +77,13 @@ class ShiftTbl:
             result = mydbconn.fetchone()
         return result  
 
+    def checkBeforeTimes():
+        with CursorFromConnectionFromPool() as mydbconn:
+            sql = "select \"luckyMan\" from lottery.\"ShiftTbl\" order by \"shiftDate\" DESC LIMIT 2"   
+            mydbconn.execute(sql)
+            result = mydbconn.fetchall() 
+        return result
+
     def insertLuckyMan(shfitDate ,luckyMan):
         with CursorFromConnectionFromPool() as mydbconn:
             sql =  "INSERT INTO lottery.\"ShiftTbl\" VALUES (%s, %s)"

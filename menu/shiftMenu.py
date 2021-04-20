@@ -19,11 +19,22 @@ def shift():
 def getLuckyMan(shiftDate):
     luckyMan = ""
     shiftTbl = ShiftTbl.getLuckyMan(shiftDate)
+    # breakpoint()
     if shiftTbl:
         luckyMan = shiftTbl[1]
     else:
-        luckyMan = ShiftScheduler.randomShift()
-        ShiftTbl.insertLuckyMan(shiftDate, luckyMan)
+        checkTimes = ShiftTbl.checkBeforeTimes()
+        isRepeat = False
+        if (checkTimes and (checkTimes[0][0] == checkTimes[1][0])):
+            while True:
+                luckyMan = ShiftScheduler.randomShift()
+                isRepeat = (checkTimes[1][0] == luckyMan)
+                if not isRepeat:
+                    break 
+        else:                
+            luckyMan = ShiftScheduler.randomShift()
+
+        # ShiftTbl.insertLuckyMan(shiftDate, luckyMan)
     return luckyMan  
 
 class template: 
