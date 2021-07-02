@@ -67,7 +67,6 @@ class TemplateObj:
 
 class template: 
     
-
     def queryResultListTemplate(resultList):
         bubleTemplateContents = template.getResultBubbleTemplate( resultList)
         contents = {
@@ -76,6 +75,7 @@ class template:
         }
         bubbleTemplate = bubleTemplateContents["contents"]
         contents["contents"] = bubbleTemplate
+        print(contents)
         return contents
 
 

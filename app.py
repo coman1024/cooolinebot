@@ -43,12 +43,10 @@ from menu import (
     rewMenu,
     saveMenu,
     notifyMenu,
-    shiftMenu
+    shiftMenu,
+    ledgerMenu
 )
-from menu.featureMenu import(
-    menu1,
-    menu3
-)
+
 
 
 from clock import Scheduler
@@ -136,7 +134,7 @@ def callback():
             if isinstance(event, MessageEvent):
                 messageText = event.message.text
                 returnText = ""
-                if (messageText == "menu"):      
+                if (messageText.lower() == "help"):      
                     line_bot_api.reply_message(event.reply_token, featureMenu.menu)
                 elif (messageText == "設定提醒"):
                     id = ""
@@ -164,6 +162,14 @@ def callback():
                         alt_text = "快來看看中獎了沒",
                         contents = rewMenu.targetReward(messageText[len("對獎"):])
                     ))  
+                elif (messageText.startswith("誰還沒付錢")):
+
+
+                    line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
+                        alt_text = "看看誰還沒付錢",
+                        contents = ledgerMenu.getLedger(messageText[len("誰還沒付錢"):])
+                    ))
+                
                 if (returnText != ""):
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
                              
