@@ -103,6 +103,9 @@ class Ledger:
     def saveToDb(self):
         LedgerMoney.insertMoney(self.owner, self.amount, self.payDate, self.createUser)
 
+    def updateToDb(self):
+        LedgerMoney.updateAmount(self.owner, self.amount, self.payDate)
+
 
 class LedgerMoney:
    
@@ -127,4 +130,9 @@ class LedgerMoney:
         with CursorFromConnectionFromPool() as mydbconn:
             sql =  "INSERT INTO lottery.\"LedgerTbl\" VALUES (%s, %s, %s, %s, current_timestamp)"
             return mydbconn.execute(sql,(owner,amount, paydate, createUser))
+
+    def updateAmount(owner, amount, paydate):
+        with CursorFromConnectionFromPool() as mydbconn:
+            sql =  "UPDATE lottery.\"LedgerTbl\" SET \"amount\" = %s WHERE \"owner\" = %s AND \"payDate\" =%s"
+            return mydbconn.execute(sql,(amount, owner, paydate))
   

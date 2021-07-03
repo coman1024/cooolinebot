@@ -13,4 +13,4 @@ from menu import ledgerMenu
 # print([weekday(2021, 7, d) for d in range(1,32)]) 
 
 
-print(ledgerMenu.getLedger("202107"))
+print(ledgerMenu.insertLedger("CAO", "123"))
