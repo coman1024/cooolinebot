@@ -163,13 +163,12 @@ def callback():
                         contents = rewMenu.targetReward(messageText[len("對獎"):])
                     ))  
                 elif (messageText.startswith("誰還沒付錢")):
-
-
                     line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
                         alt_text = "看看誰還沒付錢",
                         contents = ledgerMenu.getLedger(messageText[len("誰還沒付錢"):])
                     ))
-                
+                elif (messageText.startswith("記帳")):
+                    returnText = ledgerMenu.insertLedger(messageText[len("記帳"):])
                 if (returnText != ""):
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=returnText))  
                              
