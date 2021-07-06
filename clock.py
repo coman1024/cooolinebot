@@ -1,19 +1,22 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from apscheduler.schedulers.background import BackgroundScheduler
-
 
 import urllib.request
 import urllib.error
 import os
+
+from linebot.models import FlexSendMessage
 from config.lineBotConfig import LinbotConfig
+from menu import (
+    notifyMenu,
+    rewMenu
+)
 
-from menu import notifyMenu
-
-scheduler = BackgroundScheduler()
+LinbotConfig.initialize()
+scheduler = BlockingScheduler()
 url = os.getenv('APP_URL')
 print('start clock')
 
-@scheduler.scheduled_job('interval',  minutes=1)
+@scheduler.scheduled_job('interval',  minutes=21)
 def wake_me_up_job():
     try:
         urllib.request.urlopen(url)
@@ -26,7 +29,7 @@ def wake_me_up_job():
 
 
 
-@scheduler.scheduled_job('cron', day_of_week='tue,fri', hour='22', minute='00', timezone='Asia/Taipei')
+@scheduler.scheduled_job('cron', day_of_week='tue,fri', hour='22', minute='10', timezone='Asia/Taipei')
 def lottery649_drawing_job():
     print("開始通知")
     subscriber_ids = notifyMenu.getIdAll()
@@ -41,8 +44,9 @@ def lottery649_drawing_job():
                 alt_text = "最新中獎號碼",
                 contents = rewMenu.newestReward()
             ))
-        except Exception:
-            continue        
+        except Exception as  e:
+            continue   
+    print('Notify done.')
 
 @scheduler.scheduled_job('cron', day='20', hour='10', minute='30', timezone='Asia/Taipei')
 def pickLotteryNumber_job():
