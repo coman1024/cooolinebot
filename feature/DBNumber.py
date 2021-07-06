@@ -106,7 +106,6 @@ class Ledger:
     def updateToDb(self):
         LedgerMoney.updateAmount(self.owner, self.amount, self.payDate)
 
-
 class LedgerMoney:
    
     def getMoneyByPayDate(*payDate):
