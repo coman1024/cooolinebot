@@ -36,8 +36,6 @@ from linebot.models import (
     FlexSendMessage,
     MessageTemplateAction
 )
-
-
 from menu import (
     featureMenu,
     rewMenu,
@@ -46,9 +44,6 @@ from menu import (
     shiftMenu,
     ledgerMenu
 )
-
-
-
 from clock import Scheduler
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -105,7 +100,6 @@ def pickLotteryNumber_job():
         except Exception as e:
             print(str(e))
             continue         
-
 
 scheduler.add_job(func=Scheduler.wake_me_up_job, trigger="interval",  minutes=20)
 scheduler.start()
