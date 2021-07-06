@@ -75,7 +75,7 @@ class template:
         }
         bubbleTemplate = bubleTemplateContents["contents"]
         contents["contents"] = bubbleTemplate
-        print(contents)
+
         return contents
 
 
