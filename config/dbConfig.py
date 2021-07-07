@@ -40,7 +40,7 @@ class Database:
                                       host = db_host,
                                       port = db_port,
                                       database = db_database)
-    print("database conn initialize")
+        print("database conn initialize")
     @classmethod
     def get_connection(cls):
         return cls.__pool.getconn()

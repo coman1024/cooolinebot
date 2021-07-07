@@ -26,7 +26,7 @@ class LinbotConfig:
     def initialize(cls, **kwargs):
         cls.line_bot_api = LineBotApi(channel_access_token)
         cls.parser = WebhookParser(channel_secret)
-
+        print("linebot conn initialize")
     @classmethod
     def get_line_bot_api(cls):
         return cls.line_bot_api

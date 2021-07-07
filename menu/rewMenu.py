@@ -7,7 +7,7 @@ from feature.lottery import (
     Scrape
 )
 
-from feature.DBNumber import NumberTbl
+from database.numberTblDao import NumberTbl
 from feature import Util
 
 from typing import Dict, List, Tuple
