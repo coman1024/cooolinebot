@@ -20,6 +20,7 @@ import re
 
 from argparse import ArgumentParser
 from flask import Flask, request, abort
+from config import initConfig
 from config.lineBotConfig import LinbotConfig
 from linebot import (
     LineBotApi, WebhookParser
@@ -47,10 +48,11 @@ from menu import (
 )
 
 app = Flask(__name__)
+initConfig.initialize()
 print("sio start app !!")
 defaultText = "查無指令"
 
-LinbotConfig.initialize()
+
 
 
 @app.route("/callback", methods=['POST'])
@@ -107,10 +109,10 @@ def callback():
                         alt_text = "快來看看中獎了沒",
                         contents = rewMenu.targetReward(messageText[len("對獎"):])
                     ))  
-                elif (messageText.startswith("誰還沒付錢")):
+                elif "付錢" in messageText:
                     line_bot_api.reply_message(event.reply_token,  FlexSendMessage(
                         alt_text = "看看誰還沒付錢",
-                        contents = ledgerMenu.getLedger(messageText[len("誰還沒付錢"):])
+                        contents = ledgerMenu.getLedger()
                     ))
                 elif (messageText.startswith("記帳")):
                     returnText = ledgerMenu.insertLedger(messageText[len("記帳"):])

@@ -4,14 +4,17 @@ import urllib.request
 import urllib.error
 import os
 
+
+from config import initConfig
 from linebot.models import FlexSendMessage
 from config.lineBotConfig import LinbotConfig
 from menu import (
     notifyMenu,
-    rewMenu
+    rewMenu,
+    shiftMenu
 )
 
-LinbotConfig.initialize()
+initConfig.initialize()
 scheduler = BlockingScheduler()
 url = os.getenv('APP_URL')
 print('start clock')

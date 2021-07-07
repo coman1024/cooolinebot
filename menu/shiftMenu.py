@@ -1,4 +1,4 @@
-from feature.DBNumber import ShiftTbl
+from database.shiftTblDao import ShiftTbl
 from feature.shiftScheduler import (
     ShiftScheduler,
     ShiftInfo
