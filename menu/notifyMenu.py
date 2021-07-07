@@ -1,4 +1,4 @@
-from feature.DBNumber import IdTbl
+from database.idTblDao import IdTbl
 
 
 def insertId(id):

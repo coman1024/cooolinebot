@@ -1,4 +1,5 @@
-from feature.DBNumber import LedgerMoney,Ledger
+from database.ledgerTblDao import LedgerTbl
+from database.module.ledgerTbl import Ledger
 from feature import Util
 #查繳多少錢
 def getPayAmount():
@@ -14,7 +15,7 @@ def insertLedger(cmdStr):
         amount = cmd[1]
         if not(amount.isdigit()):
             return f"金額 {amount} 錯誤"
-        ledgerList = LedgerMoney.getMoneyByPayDate()
+        ledgerList = LedgerTbl.getMoneyByPayDate()
         ledgerFilter = list(filter(lambda obj: obj.owner == owner.strip(), ledgerList))
    
         if ledgerFilter:
@@ -27,8 +28,8 @@ def insertLedger(cmdStr):
         else:
             return "記帳失敗"
 # 查帳
-def getLedger(payDate:str):
-    ledgerList = LedgerMoney.getMoneyByPayDate(Util.getCommond(payDate).strip())
+def getLedger():
+    ledgerList = LedgerTbl.getMoneyByPayDate()
     contents = template.ledgerTemplate(ledgerList)
 
     return contents
@@ -53,14 +54,8 @@ class template:
             payDate = f"{legerList[0].payDate}"
         else:
             payDate = "沒有紀錄" 
-        ledgerListContents = [
-            {   
-                "type": "text",
-                "text": payDate,
-                "color": "#00CC66"
-            }
-        ]
-
+        
+        ledgerListSubContents = []
         for ledger in legerList:
             contentLeger = {
                 "type": "box",
@@ -78,8 +73,28 @@ class template:
                 ]
             }
 
-            ledgerListContents.append(contentLeger)
-           
+            ledgerListSubContents.append(contentLeger)
+
+        ledgerListContents = [
+            {   
+                "type": "text",
+                "text": payDate,
+                "color": "#00CC66",
+                "size": "lg"
+            },
+            {
+                "type": "separator",
+                "margin": "sm"
+            } 
+            ,{
+                "type": "box",
+                "layout": "vertical",
+                "margin": "sm",
+                "spacing": "sm",
+                "contents": ledgerListSubContents
+            }
+        ]
+
         return ledgerListContents
 
     def ledgerTemplate(ledgerList: list):
