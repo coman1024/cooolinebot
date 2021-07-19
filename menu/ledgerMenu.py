@@ -1,9 +1,27 @@
 from database.ledgerTblDao import LedgerTbl
 from database.module.ledgerTbl import Ledger
 from feature import Util
-#查繳多少錢
-def getPayAmount():
-    return
+from feature.shiftScheduler import ShiftScheduler
+import calendar
+from calendar import weekday, monthrange 
+from datetime import datetime, date
+#設定繳多少錢
+def getPayAmount(payDate):
+    year = payDate[:4]
+    month = payDate[4:]
+    monthRange = calendar.monthrange(int(year), int(month))
+    weekOfMonth =  [weekday(int(year), int(month), d) for d in range(1,monthRange[1])]
+    termCount = weekOfMonth.count(0) + weekOfMonth.count(4)
+    amount = termCount*50*2/4
+
+    return amount
+#設定下個月紀錄
+def setNextLedger(payDate):
+    mans = ShiftScheduler.mans
+    for name in mans:
+        ledger = Ledger(name, 0, payDate, "SYS")
+        LedgerTbl.insertMoney(ledger)
+    
 # 記帳
 def insertLedger(cmdStr):
     if (len(cmdStr) == 0):

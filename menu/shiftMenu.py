@@ -1,27 +1,28 @@
 from database.shiftTblDao import ShiftTbl
+from menu import ledgerMenu
+from database.module.shiftTbl import Shift
 from feature.shiftScheduler import (
-    ShiftScheduler,
-    ShiftInfo
+    ShiftScheduler
 )
 from feature import Util
 
 def shift():
+    
     shiftDate = Util.getShiftDate()
-    luckyMan = getLuckyMan(shiftDate)
+    shiftInfo = getLuckyMan(shiftDate)
     nextShiftDate = Util.getNextShiftDate()
-    nextLuckyMan = getLuckyMan(nextShiftDate)
+    nextShiftInfo = getLuckyMan(nextShiftDate)
 
-    shiftInfo = ShiftInfo(shiftDate, luckyMan)
-    nextShiftInfo = ShiftInfo(nextShiftDate, nextLuckyMan)
     return template.shiftResultTemplate(shiftInfo, nextShiftInfo)
 
 
 def getLuckyMan(shiftDate):
+    
     luckyMan = ""
-    shiftTbl = ShiftTbl.getLuckyMan(shiftDate)
+    shift = ShiftTbl.getLuckyMan(shiftDate)
     # breakpoint()
-    if shiftTbl:
-        luckyMan = shiftTbl[1]
+    if shift:
+        luckyMan = shift.luckyMan
     else:
         checkTimes = ShiftTbl.checkBeforeTimes()
         isRepeat = False
@@ -34,11 +35,14 @@ def getLuckyMan(shiftDate):
         else:                
             luckyMan = ShiftScheduler.randomShift()
 
-        ShiftTbl.insertLuckyMan(shiftDate, luckyMan)
-    return luckyMan  
+        payMount = ledgerMenu.getPayAmount(shiftDate)
+        shift = Shift(shiftDate, luckyMan, payMount)
+        ShiftTbl.insertLuckyMan(shift)
+        ledgerMenu.setNextLedger(shiftDate)
+    return shift
 
 class template: 
-    def shiftResultTemplate(shiftInfo: ShiftInfo, nextShiftInfo: ShiftInfo):
+    def shiftResultTemplate(shiftInfo: Shift, nextShiftInfo: Shift):
         contents = {
             "type": "bubble",
             "body": {
@@ -75,7 +79,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": shiftInfo.luckyMan,
+                            "text":f" {shiftInfo.luckyMan} ({shiftInfo.amount}/人)",
                             "size": "sm",
                             "color": "#111111",
                             "align": "end"
@@ -94,7 +98,7 @@ class template:
                         },
                         {
                             "type": "text",
-                            "text": nextShiftInfo.luckyMan,
+                            "text": f"{nextShiftInfo.luckyMan} ({nextShiftInfo.amount}/人)",
                             "size": "sm",
                             "color": "#111111",
                             "align": "end"
