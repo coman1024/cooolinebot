@@ -5,13 +5,3 @@ class ShiftScheduler:
     def randomShift():
         luckyMan = ShiftScheduler.mans[random.randint(0,3)]
         return luckyMan
-
-class ShiftInfo:
-    def __init__(self, shiftDate: str, luckyMan: str):
-        self.shiftDate = shiftDate
-        self.luckyMan = luckyMan
-
-
-
-
-
