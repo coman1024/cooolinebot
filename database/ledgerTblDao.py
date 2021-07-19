@@ -11,7 +11,7 @@ class LedgerTbl:
 
             if payDate and len(payDate)!=1:
                 sql += "WHERE \"payDate\" = %s "
-            sql += "ORDER BY \"payDate\" LIMIT 4 "
+            sql += "ORDER BY \"payDate\" DESC LIMIT 4 "
 
             mydbconn.execute(sql,(*payDate,))
             result = mydbconn.fetchall()
@@ -21,10 +21,11 @@ class LedgerTbl:
                 resultList.append(Ledger(x[0], x[1], x[2], x[3]))
         return resultList  
     
-    def insertMoney(owner, amount, paydate, createUser):
+    def insertMoney(ledger):
+
         with CursorFromConnectionFromPool() as mydbconn:
             sql =  "INSERT INTO lottery.\"LedgerTbl\" VALUES (%s, %s, %s, %s, current_timestamp)"
-            return mydbconn.execute(sql,(owner,amount, paydate, createUser))
+            return mydbconn.execute(sql,(ledger.owner,ledger.amount, ledger.payDate, ledger.createUser))
 
     def updateAmount(owner, amount, paydate):
         with CursorFromConnectionFromPool() as mydbconn:

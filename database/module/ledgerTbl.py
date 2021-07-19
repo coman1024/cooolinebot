@@ -7,10 +7,3 @@ class Ledger:
         self.payDate = payDate 
         self.createUser = createUser
         self.createDate = createDate
-        
-    
-    def saveToDb(self):
-        LedgerMoney.insertMoney(self.owner, self.amount, self.payDate, self.createUser)
-
-    def updateToDb(self):
-        LedgerMoney.updateAmount(self.owner, self.amount, self.payDate)
