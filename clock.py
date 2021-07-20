@@ -51,7 +51,7 @@ def lottery649_drawing_job():
             continue   
     print('Notify done.')
 
-@scheduler.scheduled_job('cron', day='20', hour='10', minute='30', timezone='Asia/Taipei')
+@scheduler.scheduled_job('cron', day='20', hour='11', minute='30', timezone='Asia/Taipei')
 def pickLotteryNumber_job():
     print("誰去買樂透")
     subscriber_ids = notifyMenu.getIdAll()
