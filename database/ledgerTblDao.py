@@ -27,8 +27,8 @@ class LedgerTbl:
             sql =  "INSERT INTO lottery.\"LedgerTbl\" VALUES (%s, %s, %s, %s, current_timestamp)"
             return mydbconn.execute(sql,(ledger.owner,ledger.amount, ledger.payDate, ledger.createUser))
 
-    def updateAmount(owner, amount, paydate):
+    def updateAmount(ledger):
         with CursorFromConnectionFromPool() as mydbconn:
             sql =  "UPDATE lottery.\"LedgerTbl\" SET \"amount\" = %s WHERE \"owner\" = %s AND \"payDate\" =%s"
-            return mydbconn.execute(sql,(amount, owner, paydate))
+            return mydbconn.execute(sql,(ledger.amount, ledger.owner, ledger.payDate))
   
