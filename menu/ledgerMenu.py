@@ -39,8 +39,8 @@ def insertLedger(cmdStr):
         if ledgerFilter:
             ledger = ledgerFilter[0]
             ledger.amount = amount
-            ledger.updateToDb()
-            return f"記帳成功 ,{owner} {ledger.payDate} {amount}元"
+            LedgerTbl.updateAmount(ledger)
+            return f"記帳成功 ,{ledger.owner} {ledger.payDate} {ledger.amount}元"
         elif(len(ledgerFilter) == 0):    
             return f"找不到 {owner}"
         else:
