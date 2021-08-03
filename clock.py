@@ -1,11 +1,11 @@
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import urllib.request
 import urllib.error
 import os
 
 
-from config import initConfig
+
 from linebot.models import FlexSendMessage
 from config.lineBotConfig import LinbotConfig
 from menu import (
@@ -14,10 +14,9 @@ from menu import (
     shiftMenu
 )
 
-initConfig.initialize()
-scheduler = BlockingScheduler()
+
+scheduler = BackgroundScheduler()
 url = os.getenv('APP_URL')
-print('start clock')
 
 @scheduler.scheduled_job('interval',  minutes=21)
 def wake_me_up_job():
@@ -70,4 +69,10 @@ def pickLotteryNumber_job():
             print(str(e))
             continue         
 
-scheduler.start()
+class SchdulerJob:
+    @classmethod
+    def initialize(cls, **kwargs):
+        print('clock initialize')
+        scheduler.start()
+
+

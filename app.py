@@ -47,10 +47,10 @@ from menu import (
     ledgerMenu
 )
 
-from clock import SchedulerJob
+initConfig.initialize()
 
 app = Flask(__name__)
-initConfig.initialize()
+
 print("sio start app !!")
 defaultText = "查無指令"
 
